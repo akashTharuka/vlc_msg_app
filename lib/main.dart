@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+// import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
 
 void main() {
-  runApp(const MyApp());
+
+	WidgetsFlutterBinding.ensureInitialized();
+
+	sqfliteFfiInit();
+  var databaseFactory = databaseFactoryFfi;
+	
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+
+  MyApp({super.key});
+
+	final Future<Database> db = DatabaseHelper().db;
 
   // This widget is the root of your application.
   @override
