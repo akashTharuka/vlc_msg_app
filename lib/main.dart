@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/HomePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: HomeScreen(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -123,3 +124,214 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+ 
+// class BasicWidget extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Basic Widget'),
+//       ),
+//       body: Center(
+//         child: Text(
+//           'Hello, World!',
+//           style: TextStyle(fontSize: 24),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+// class FirstAppLogin extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Container(
+//           width: 360,
+//           height: 800,
+//           clipBehavior: Clip.antiAlias,
+//           decoration: BoxDecoration(color: Colors.white),
+//           child: Stack(
+//             children: [
+//               Positioned(
+//                 left: -8,
+//                 top: -538,
+//                 child: Container(
+//                   width: 368,
+//                   height: 1338,
+//                   decoration: BoxDecoration(
+//                     image: DecorationImage(
+//                       image: NetworkImage("https://via.placeholder.com/368x1338"),
+//                       fit: BoxFit.fill,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: -5,
+//                 top: -151,
+//                 child: Container(
+//                   width: 370,
+//                   height: 642,
+//                   decoration: ShapeDecoration(
+//                     color: Color(0xFFFBFBFB),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(61),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 103,
+//                 top: 690,
+//                 child: Container(
+//                   width: 155,
+//                   height: 47,
+//                   decoration: ShapeDecoration(
+//                     color: Color(0xFFF5F5F5),
+//                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 121,
+//                 top: 699,
+//                 child: SizedBox(
+//                   width: 118,
+//                   height: 29,
+//                   child: Text(
+//                     'Login',
+//                     textAlign: TextAlign.center,
+//                     style: TextStyle(
+//                       color: Color(0xFF304B4F),
+//                       fontSize: 20,
+//                       fontFamily: 'Inter',
+//                       fontWeight: FontWeight.w400,
+//                       height: 0,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 82,
+//                 top: 541,
+//                 child: SizedBox(
+//                   width: 239,
+//                   height: 27,
+//                   child: Text(
+//                     'Do you wish to use your mobile credentials as your login details?',
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 15,
+//                       fontFamily: 'Inter',
+//                       fontWeight: FontWeight.w400,
+//                       height: 0,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 57,
+//                 top: 88,
+//                 child: Container(
+//                   width: 247,
+//                   height: 146,
+//                   decoration: BoxDecoration(
+//                     image: DecorationImage(
+//                       image: NetworkImage("https://via.placeholder.com/247x146"),
+//                       fit: BoxFit.fill,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 40,
+//                 top: 322,
+//                 child: SizedBox(
+//                   width: 271,
+//                   height: 23,
+//                   child: Text.rich(
+//                     TextSpan(
+//                       children: [
+//                         TextSpan(
+//                           text: 'Welcome to ',
+//                           style: TextStyle(
+//                             color: Color(0xFF788182),
+//                             fontSize: 20,
+//                             fontFamily: 'Lao Muang Don',
+//                             fontWeight: FontWeight.w400,
+//                             height: 0,
+//                           ),
+//                         ),
+//                         TextSpan(
+//                           text: 'LuminaLinq',
+//                           style: TextStyle(
+//                             color: Color(0xFF5699A2),
+//                             fontSize: 20,
+//                             fontFamily: 'Lao Muang Don',
+//                             fontWeight: FontWeight.w400,
+//                             height: 0,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     textAlign: TextAlign.center,
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 16,
+//                 top: 376,
+//                 child: Container(
+//                   width: 328,
+//                   height: 60,
+//                   decoration: ShapeDecoration(
+//                     color: Color(0x38D9D9D9),
+//                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 80,
+//                 top: 395,
+//                 child: SizedBox(
+//                   width: 202,
+//                   height: 27,
+//                   child: Text(
+//                     'Enter your name',
+//                     textAlign: TextAlign.center,
+//                     style: TextStyle(
+//                       color: Color(0xFFB9B9B9),
+//                       fontSize: 20,
+//                       fontFamily: 'Inter',
+//                       fontWeight: FontWeight.w400,
+//                       height: 0,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 left: 41,
+//                 top: 543,
+//                 child: Container(
+//                   width: 30,
+//                   height: 30,
+//                   decoration: BoxDecoration(
+//                     image: DecorationImage(
+//                       image: NetworkImage("https://via.placeholder.com/30x30"),
+//                       fit: BoxFit.fill,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
