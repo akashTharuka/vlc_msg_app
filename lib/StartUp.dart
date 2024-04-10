@@ -11,9 +11,6 @@ class _StartUpState extends State<StartUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('LuminaLinq'),
-      ),
       body: Column(
         children: [
           // App Logo and Welcome Text
