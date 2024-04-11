@@ -7,13 +7,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
 
 import 'package:vlc_msg_app/main.dart';
 
 void main() {
+
+  final Future<Database> db = DatabaseHelper().db;
+  
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget( MyApp());
+    await tester.pumpWidget(MyApp(database: await db));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

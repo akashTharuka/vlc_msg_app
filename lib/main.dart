@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
-// import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 
-void main() {
+Future<void> main() async {
 
 	WidgetsFlutterBinding.ensureInitialized();
 
 	sqfliteFfiInit();
   var databaseFactory = databaseFactoryFfi;
+
+	final DatabaseHelper dbh = DatabaseHelper();
+	final Future<Database> db = DatabaseHelper().db;
 	
-  runApp(MyApp());
+	runApp(MyApp(database: await db));
 }
 
 class MyApp extends StatelessWidget {
 
-  MyApp({super.key});
+	final Database database;
 
-	final Future<Database> db = DatabaseHelper().db;
+  const MyApp({super.key, required this.database});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
