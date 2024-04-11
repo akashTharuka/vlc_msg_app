@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
-// import 'dart:io' as io;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/models/msg.dart';
