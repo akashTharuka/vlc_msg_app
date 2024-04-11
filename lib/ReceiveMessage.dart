@@ -25,19 +25,41 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
         future: _camerasFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-            return Column(
-              children: [
-                // ... other widgets ...
-                Expanded(
-                  child: Container(
-                    color: Colors.black,
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // App Logo and Welcome Text
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Image.asset('assets/BareLogo.png'),
+                  ),
+                  const Text(
+                    'Welcome to the VLC Message App',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  // Camera Preview
+                  Container(
+                    height: 300, // adjust this to fit your needs
+                    width: double.infinity,
                     child: CameraPreviewWidget(
                       camera: snapshot.data!.first,
                     ),
                   ),
-                ),
-                // ... other widgets ...
-              ],
+                  // Text Field
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter your message',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           } else {
             return Center(child: CircularProgressIndicator());
@@ -47,6 +69,7 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
     );
   }
 }
+
 
 class CameraPreviewWidget extends StatefulWidget {
   final CameraDescription camera;
