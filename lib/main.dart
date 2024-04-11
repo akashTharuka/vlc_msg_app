@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/HomePage.dart';
 import 'package:vlc_msg_app/StartUp.dart';
 import 'package:vlc_msg_app/SendMessage.dart';
+import 'package:vlc_msg_app/ReceiveMessage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SendMessagePage(),//const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ReceiveMessagePage(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
