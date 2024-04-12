@@ -34,14 +34,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue, Colors.green],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
+        width: double.infinity,
+        // decoration: const BoxDecoration(
+        //   gradient: LinearGradient(
+        //     colors: [Colors.blue, Colors.green],
+        //     begin: Alignment.topRight,
+        //     end: Alignment.bottomLeft,
+        //   ),
+        // ),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
