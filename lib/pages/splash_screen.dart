@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:vlc_msg_app/pages/onboarding/onboarding_view.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => OnboardingView()),
       );
     });
   }
@@ -33,34 +33,37 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        width: double.infinity,
-        // decoration: const BoxDecoration(
-        //   gradient: LinearGradient(
-        //     colors: [Colors.blue, Colors.green],
-        //     begin: Alignment.topRight,
-        //     end: Alignment.bottomLeft,
-        //   ),
-        // ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'LuminaLINQ',
-              style: TextStyle(
-                fontSize: 40,
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
+      body: Stack(
+        children: [
+          Center(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'LuminaLINQ',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 24, // Adjust the value as needed
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'Powered by Flutter',
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
