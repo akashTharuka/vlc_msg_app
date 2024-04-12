@@ -55,6 +55,9 @@ flutter:
   assets:
     - assets/appLogo.png
     - assets/BareLogo.png
+    - assets/background.jpg
+    - assets/qrcode.png
+    - assets/settings.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

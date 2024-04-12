@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/HomePage.dart';
-import 'package:vlc_msg_app/StartUp.dart';
-import 'package:vlc_msg_app/SendMessage.dart';
-import 'package:vlc_msg_app/ReceiveMessage.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -32,10 +28,10 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 83, 82, 83)),
         useMaterial3: true,
       ),
-      home: ReceiveMessagePage(),//const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: HomeScreen(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
