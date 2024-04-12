@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         // defeault brightness and colors
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.purple.shade50,
+          primary: Colors.yellow.shade700,
           brightness: Brightness.dark,
           background: const Color(0xffeef1f5),
         ),
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
+            color: Colors.black,
           ),
           displaySmall: TextStyle(
             fontSize: 20,
