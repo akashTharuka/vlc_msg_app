@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           color: Color(0xff121212),
         ),
         labelLarge: const TextStyle(
-          fontSize: 20,
+          fontSize: 12,
           color: Color(0xff121212),
         ),
         labelMedium: const TextStyle(
@@ -54,15 +54,14 @@ class MyApp extends StatelessWidget {
         ));
 
     const colorScheme = ColorScheme.dark(
-      primary: Color(0xff121212),
+      primary: Color(0xff121212), // use for normal text
       secondary: Color(0xff2f3135),
-      background: Color(0xffbcbcbc),
+      background: Color(0xFFE1E0E0), // use for scaffold background
       surface: Color(0xff4a545c),
-      error: Color(0xFFC7161F),
-      onPrimary: Color(0xff657b81),
-      onSecondary: Color(0xff83a4a4),
-      onSurface: Color(0xffa9cec2),
-      onError: Color(0xff1D1617),
+      error: Color(0xFFC7161F), // obviously for errors
+      onPrimary: Color(0xff1D1617), // use for box shadows with opacity .11
+      onSecondary: Color(0xff83a4a4), // use for hints
+      onSurface: Color(0xffF7F8F8), // no idea
       brightness: Brightness.dark,
     );
 
