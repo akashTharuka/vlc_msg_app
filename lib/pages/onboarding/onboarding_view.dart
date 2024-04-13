@@ -25,58 +25,18 @@ class _OnboardingViewState extends State<OnboardingView> {
         color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: isLastPage
-            ? getStarted()
+            ? getStarted(context)
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // skip button
-                  TextButton(
-                    onPressed: () {
-                      pageController
-                          .jumpToPage(controller.onboardingInfoItems.length);
-                    },
-                    child: Text(
-                      'Skip',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-
-                  // page indicator
-                  SmoothPageIndicator(
-                    controller: pageController,
-                    count: controller.onboardingInfoItems.length + 1,
-                    onDotClicked: (index) => pageController.animateToPage(
-                      index,
-                      duration: const Duration(milliseconds: 600),
-                      curve: Curves.easeInOut,
-                    ),
-                    effect: const WormEffect(
-                      dotWidth: 10,
-                      dotHeight: 10,
-                      activeDotColor: Colors.black,
-                      dotColor: Colors.grey,
-                    ),
-                  ),
-
-                  // next button
-                  TextButton(
-                    onPressed: () {
-                      pageController.nextPage(
-                        duration: const Duration(milliseconds: 600),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: Text(
-                      'Next',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
+                  skipButton(context),
+                  smoothPageIndicator(),
+                  nextButton(context),
                 ],
               ),
       ),
       body: Container(
         width: double.infinity,
-        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: PageView.builder(
           onPageChanged: (index) => setState(() =>
@@ -103,8 +63,8 @@ class _OnboardingViewState extends State<OnboardingView> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         hintText: 'Enter your name',
-                        hintStyle: const TextStyle(
-                          color: Color(0xffDDDADA),
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
                           fontSize: 14,
                         ),
                         filled: true,
@@ -115,8 +75,8 @@ class _OnboardingViewState extends State<OnboardingView> {
                         ),
                         contentPadding: const EdgeInsets.all(15),
                       ),
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
                       ),
                     ),
@@ -155,18 +115,15 @@ class _OnboardingViewState extends State<OnboardingView> {
                   Text(
                     controller.onboardingInfoItems[index].title,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                   const SizedBox(height: 15),
                   Text(controller.onboardingInfoItems[index].description,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                      )),
+                      style: Theme.of(context).textTheme.bodyMedium),
                 ],
               );
             }
@@ -176,12 +133,57 @@ class _OnboardingViewState extends State<OnboardingView> {
     );
   }
 
-  Widget getStarted() {
+  TextButton nextButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        pageController.nextPage(
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      },
+      child: Text(
+        'Next',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+    );
+  }
+
+  SmoothPageIndicator smoothPageIndicator() {
+    return SmoothPageIndicator(
+      controller: pageController,
+      count: controller.onboardingInfoItems.length + 1,
+      onDotClicked: (index) => pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      ),
+      effect: const WormEffect(
+        dotWidth: 10,
+        dotHeight: 10,
+        activeDotColor: Colors.black,
+        dotColor: Colors.grey,
+      ),
+    );
+  }
+
+  TextButton skipButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        pageController.jumpToPage(controller.onboardingInfoItems.length);
+      },
+      child: Text(
+        'Skip',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+    );
+  }
+
+  Widget getStarted(context) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
       ),
       width: MediaQuery.of(context).size.width * .9,
       height: 55,
@@ -197,11 +199,9 @@ class _OnboardingViewState extends State<OnboardingView> {
             MaterialPageRoute(builder: (context) => HomeScreen()),
           );
         },
-        child: const Text(
+        child: Text(
           "Get Started",
-          style: TextStyle(
-            color: Colors.black,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
     );
