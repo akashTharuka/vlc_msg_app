@@ -38,7 +38,8 @@ class HomeScreen extends StatelessWidget {
           ),
           body: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.only(top: 0, bottom: 32, left: 32, right: 32),
+            padding:
+                const EdgeInsets.only(top: 0, bottom: 32, left: 32, right: 32),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -51,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                   child: Text(
                     'Hello Lasith!',
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         fontWeight: FontWeight.normal,
                         color: Colors.white),
                   ),
@@ -82,8 +83,11 @@ class HomeScreen extends StatelessWidget {
                                 builder: (context) => SendMessagePage()),
                           );
                         },
-                        child: Text('Send Message',
-                        style: TextStyle(fontSize: ),),
+                        child: Text(
+                          'Send Message',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),
+                        ),
                       ),
                     ),
                     Container(
@@ -108,7 +112,10 @@ class HomeScreen extends StatelessWidget {
                                 builder: (context) => ReceiveMessagePage()),
                           );
                         },
-                        child: Text('Receive Message'),
+                        child: Text('Receive Message',
+                        style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),),
+                        
                       ),
                     ),
                     Container(
@@ -129,7 +136,9 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () {
                           // TODO: Add message history functionality
                         },
-                        child: Text('Message History'),
+                        child: Text('Message History',
+                        style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),),
                       ),
                     ),
                     Container(
@@ -150,7 +159,9 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () {
                           // TODO: Add contacts functionality
                         },
-                        child: Text('Contacts'),
+                        child: Text('Contacts',
+                        style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),),
                       ),
                     ),
                   ],
@@ -188,7 +199,9 @@ class HomeScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => StartUp()),
                           );
                         },
-                        child: Text('Log Out'),
+                        child: Text('Log Out',
+                        style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.normal),),
                       ),
                     )
                   ],

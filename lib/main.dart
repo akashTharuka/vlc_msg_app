@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/HomePage.dart';
+import 'package:vlc_msg_app/StartUp.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 83, 82, 83)),
         useMaterial3: true,
       ),
-      home: HomeScreen(),//const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: StartUp(),//const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
