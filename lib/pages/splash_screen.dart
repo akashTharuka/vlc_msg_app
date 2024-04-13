@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 import 'package:vlc_msg_app/pages/onboarding/onboarding_view.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,10 +17,14 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
+      final prefs = await SharedPreferences.getInstance();
+      final onboardingCompleted = prefs.getBool('onboarding') ?? false;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => OnboardingView()),
+        MaterialPageRoute(
+            builder: (context) =>
+                onboardingCompleted ? HomeScreen() : const OnboardingView()),
       );
     });
   }

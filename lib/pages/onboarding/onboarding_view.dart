@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 import 'package:vlc_msg_app/pages/onboarding/onboarding_items.dart';
@@ -85,27 +86,63 @@ class _OnboardingViewState extends State<OnboardingView> {
           itemBuilder: (context, index) {
             if (index == controller.onboardingInfoItems.length) {
               return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 40),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xff1D1617).withOpacity(0.11),
+                          spreadRadius: 0,
+                          blurRadius: 40,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter your name',
+                        hintStyle: const TextStyle(
+                          color: Color(0xffDDDADA),
+                          fontSize: 14,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.all(15),
+                      ),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                   Image.asset('assets/images/Men talking-amico.png'),
                   const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Check this box to set the device lock as your password',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: isChecked,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked = value!;
+                            });
+                          },
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: Text(
+                            'Do you wish to use your device credentials as your app lock?',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -141,6 +178,7 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   Widget getStarted() {
     return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Theme.of(context).colorScheme.primary,
@@ -148,7 +186,12 @@ class _OnboardingViewState extends State<OnboardingView> {
       width: MediaQuery.of(context).size.width * .9,
       height: 55,
       child: TextButton(
-        onPressed: () {
+        onPressed: () async {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool('onboarding', true);
+
+          if (!mounted) return;
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),

@@ -9,7 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
         // defeault brightness and colors
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.purple.shade50,
-          primary: Colors.yellow.shade700,
           brightness: Brightness.dark,
           background: const Color(0xffeef1f5),
         ),
@@ -49,8 +47,13 @@ class MyApp extends StatelessWidget {
             color: Colors.black26,
           ),
         ),
+
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor:
+              Colors.black, // Change this color to your desired cursor color
+        ),
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
