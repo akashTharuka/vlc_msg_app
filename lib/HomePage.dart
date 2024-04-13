@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       children: <Widget>[
         // The Container with the background image
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
                   'assets/background.jpg'), // replace with your image
@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
           ),
           body: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.only(top: 0, bottom: 32, left: 32, right: 32),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -46,20 +46,22 @@ class HomeScreen extends StatelessWidget {
                   height: 80,
                   child: Image.asset('assets/BareLogo.png'),
                 ),
-                Text(
-                  'Hello Lasith!',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                Container(
+                  margin: EdgeInsets.only(top: 15.0), // specify the top margin
+                  child: Text(
+                    'Hello Lasith!',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
+                  ),
                 ),
                 ButtonBar(
                   alignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.8, // 60% of screen width // specify the width
-                      height: 80, // specify the height
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       margin: EdgeInsets.only(bottom: 15, top: 18),
                       child: ElevatedButton(
                         style: ButtonStyle(
@@ -80,19 +82,18 @@ class HomeScreen extends StatelessWidget {
                                 builder: (context) => SendMessagePage()),
                           );
                         },
-                        child: Text('Send Message'),
+                        child: Text('Send Message',
+                        style: TextStyle(fontSize: ),),
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.8, // specify the width
-                      height: 80, // specify the height
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       margin: EdgeInsets.only(bottom: 15),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors
-                              .white
-                              .withOpacity(0.8)), // set opacity here
+                          backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.8)),
                           foregroundColor: MaterialStateProperty.all(
                               Colors.black.withOpacity(0.55)),
                           shape:
@@ -111,15 +112,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.8, // specify the width
-                      height: 80, // specify the height
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       margin: EdgeInsets.only(bottom: 15),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors
-                              .white
-                              .withOpacity(0.8)), // set opacity here
+                          backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.8)),
                           foregroundColor: MaterialStateProperty.all(
                               Colors.black.withOpacity(0.55)),
                           shape:
@@ -134,15 +133,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.8, // specify the width
-                      height: 80, // specify the height
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       margin: EdgeInsets.only(bottom: 25),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors
-                              .white
-                              .withOpacity(0.8)), // set opacity here
+                          backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.8)),
                           foregroundColor: MaterialStateProperty.all(
                               Colors.black.withOpacity(0.55)),
                           shape:
@@ -162,8 +159,8 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     SizedBox(
-                      width: 50.0, // specify the width
-                      height: 50.0, // specify the height
+                      width: 50.0,
+                      height: 50.0,
                       child: IconButton(
                         icon: Image.asset('assets/qrcode.png'),
                         onPressed: () {
@@ -172,14 +169,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.4, // specify the width
+                      width: MediaQuery.of(context).size.width * 0.4,
                       margin: EdgeInsets.only(right: 10),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors
-                              .white
-                              .withOpacity(0.8)), // set opacity here
+                          backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.8)),
                           foregroundColor: MaterialStateProperty.all(
                               Colors.black.withOpacity(0.55)),
                           shape:
