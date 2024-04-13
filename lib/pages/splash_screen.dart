@@ -50,9 +50,21 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'LuminaLINQ',
-                    style: Theme.of(context).textTheme.displayLarge,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'lumina',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        'LINQ',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -65,7 +77,9 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Center(
               child: Text(
                 'Powered by Flutter',
-                style: Theme.of(context).textTheme.displaySmall,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
               ),
             ),
           ),
