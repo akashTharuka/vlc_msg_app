@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
+import 'package:vlc_msg_app/pages/msg_compose_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -7,7 +9,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               // TODO: Navigate to settings screen
             },
@@ -18,7 +20,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'Hello Lasith!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
@@ -27,27 +29,37 @@ class HomeScreen extends StatelessWidget {
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: Add send message functionality
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MsgComposeScreen(),
+                      ),
+                    );
                   },
-                  child: Text('Send Message'),
+                  child: const Text('Send Message'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Add receive message functionality
                   },
-                  child: Text('Receive Message'),
+                  child: const Text('Receive Message'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Add message history functionality
                   },
-                  child: Text('Message History'),
+                  child: const Text('Message History'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: Add contacts functionality
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ContactScreen(),
+                      ),
+                    );
                   },
-                  child: Text('Contacts'),
+                  child: const Text('Contacts'),
                 ),
               ],
             ),
@@ -59,13 +71,13 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.exit_to_app),
+              icon: const Icon(Icons.exit_to_app),
               onPressed: () {
                 // TODO: Add logout functionality
               },
             ),
             IconButton(
-              icon: Icon(Icons.qr_code),
+              icon: const Icon(Icons.qr_code),
               onPressed: () {
                 // TODO: Add view QR code functionality
               },
