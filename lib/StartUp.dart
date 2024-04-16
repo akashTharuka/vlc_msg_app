@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vlc_msg_app/HomePage.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class StartUp extends StatefulWidget {
   @override
