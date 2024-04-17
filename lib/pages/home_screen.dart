@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vlc_msg_app/StartUp.dart';
-import 'package:vlc_msg_app/SendMessage.dart';
-import 'package:vlc_msg_app/ReceiveMessage.dart';
+import 'package:vlc_msg_app/pages/StartUp.dart';
+import 'package:vlc_msg_app/pages/SendMessage.dart';
+import 'package:vlc_msg_app/pages/ReceiveMessage.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
