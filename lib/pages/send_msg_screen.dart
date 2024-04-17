@@ -1,64 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
-class MsgComposeScreen extends StatefulWidget {
-  const MsgComposeScreen({super.key});
+class SendMsgScreen extends StatefulWidget {
+  const SendMsgScreen({super.key});
 
   @override
-  State<MsgComposeScreen> createState() => _MsgComposeScreenState();
+  State<SendMsgScreen> createState() => _SendMsgScreenState();
 }
 
-class _MsgComposeScreenState extends State<MsgComposeScreen> {
+class _SendMsgScreenState extends State<SendMsgScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(context),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            addRecipient(),
-            Row(
+    return Stack(
+      children: [
+        // The Container with the background image
+        Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background.jpg'), // replace with your image
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        // The Scaffold with your widgets
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: appBar(context),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
               children: [
-                InputChip(
-                  label: const Text('John Doe'),
-                  deleteIcon: const Icon(
-                    Icons.close,
-                    size: 15,
-                    color: Colors.red,
-                  ),
-                  onDeleted: () {},
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
+                const SizedBox(height: 20),
+                addRecipient(),
+                Row(
+                  children: [
+                    InputChip(
+                      label: const Text('John Doe'),
+                      deleteIcon: const Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.red,
+                      ),
+                      onDeleted: () {},
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                  ],
                 ),
+                msgInputField(),
+                sendButton(context),
               ],
             ),
-            msgInputField(),
-            sendButton(context),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Container sendButton(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.4,
       margin: const EdgeInsets.only(bottom: 20, top: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-      ),
-      width: MediaQuery.of(context).size.width * .5,
-      height: 55,
-      child: TextButton(
-        onPressed: () {},
+      child: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            )
+          ),
+        ),
+        onPressed: () {
+          // TODO: send message logic here
+        },
         child: Text(
-          "Send",
+          'Send',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
@@ -122,13 +142,17 @@ class _MsgComposeScreenState extends State<MsgComposeScreen> {
             color: Theme.of(context).colorScheme.onSecondary,
             fontSize: 14,
           ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(12),
-            child: SvgPicture.asset(
-              'assets/icons/Search.svg',
-              height: 20,
-              width: 20,
+          prefixIcon: IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withOpacity(0.4),
             ),
+            onPressed: () {
+              // TODO: navigate to the select_contacts page
+            },
           ),
           suffixIcon: SizedBox(
             width: 70,
@@ -169,46 +193,26 @@ class _MsgComposeScreenState extends State<MsgComposeScreen> {
 
   AppBar appBar(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      leading: GestureDetector(
-        onTap: () => {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          )
-        },
-        child: Container(
-          margin: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          alignment: Alignment.center,
-          child: SvgPicture.asset(
-            'assets/icons/Arrow - Left 2.svg',
-            height: 20,
-            width: 20,
-          ),
-        ),
+      backgroundColor: Colors.transparent, // here too
+      elevation: 0, // and here
+      leading: IconButton(
+          icon: const Icon(Icons.keyboard_arrow_left),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+          color: Theme.of(context).colorScheme.background,
       ),
       actions: [
-        GestureDetector(
-          onTap: () => {},
-          child: Container(
-            margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-            width: 37,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            alignment: Alignment.center,
-            child: SvgPicture.asset(
-              'assets/icons/dots.svg',
-              height: 5,
-              width: 5,
-            ),
-          ),
-        )
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () {
+            // TODO: Navigate to settings screen
+          },
+          color: Theme.of(context).colorScheme.background,
+        ),
       ],
     );
   }

@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/pages/splash_screen.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+
+	WidgetsFlutterBinding.ensureInitialized();
+
+	sqfliteFfiInit();
+  // var databaseFactory = databaseFactoryFfi;
+
+	// final DatabaseHelper dbh = DatabaseHelper();
+	final Future<Database> db = DatabaseHelper().db;
+	
+	runApp(MyApp(database: await db));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+
+  final Database database;
+  const MyApp({super.key, required this.database});
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +45,8 @@ class MyApp extends StatelessWidget {
           color: Color(0xff121212),
         ),
         bodyMedium: const TextStyle(
-          fontSize: 16,
-          color: Color(0xff121212),
+          fontSize: 15,
+          color: Color(0xFF4B4B4B),
         ),
         bodySmall: const TextStyle(
           fontSize: 14,
@@ -60,7 +73,7 @@ class MyApp extends StatelessWidget {
       error: Color(0xFFC7161F), // obviously for errors
       onPrimary: Color(0xff1D1617), // use for box shadows with opacity .11
       onSecondary: Color(0xff83a4a4), // use for hints
-      onSurface: Color(0xffF7F8F8), // no idea
+      onSurface: Color(0x38D9D9D9), // text field fill color
       brightness: Brightness.dark,
     );
 

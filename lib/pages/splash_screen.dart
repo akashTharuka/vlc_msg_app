@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
-import 'package:vlc_msg_app/pages/onboarding/onboarding_view.dart';
+import 'package:vlc_msg_app/pages/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                onboardingCompleted ? HomeScreen() : const OnboardingView()),
+                onboardingCompleted ? const HomeScreen() :  const OnboardingScreen()),
       );
     });
   }
@@ -39,14 +39,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Center(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
+          // The Container with the background image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background.jpg'), // replace with your image
+                fit: BoxFit.cover,
               ),
+            ),
+          ),
+          // The Scaffold with your widgets
+          Center(
+            child: SizedBox(
+              width: double.infinity,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
