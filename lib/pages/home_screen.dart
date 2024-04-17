@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
-                  'assets/background.jpg'), // replace with your image
+                  'assets/images/background.jpg'), // replace with your image
               fit: BoxFit.cover,
             ),
           ),
@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
             elevation: 0, // and here
             actions: [
               IconButton(
-                icon: Image.asset('assets/settings.png'),
+                icon: Image.asset('assets/icons/settings.png'),
                 onPressed: () {
                   // TODO: Navigate to settings screen
                 },
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   height: 80,
-                  child: Image.asset('assets/BareLogo.png'),
+                  child: Image.asset('assets/images/BareLogo.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 15.0), // specify the top margin
@@ -173,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                       width: 50.0,
                       height: 50.0,
                       child: IconButton(
-                        icon: Image.asset('assets/qrcode.png'),
+                        icon: Image.asset('assets/icons/qrcode.png'),
                         onPressed: () {
                           // TODO: Add view QR code functionality
                         },

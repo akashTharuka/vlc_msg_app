@@ -13,7 +13,7 @@ class SendMessagePage extends StatelessWidget {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image:
-                AssetImage('assets/background.jpg'), // replace with your image
+                AssetImage('assets/images/background.jpg'), // replace with your image
             fit: BoxFit.cover,
           ),
         ),
@@ -28,7 +28,7 @@ class SendMessagePage extends StatelessWidget {
                 children: <Widget>[
                   SizedBox(
                     height: 80,
-                    child: Image.asset('assets/BareLogo.png'),
+                    child: Image.asset('assets/images/BareLogo.png'),
                   ),
                   Container(
                     margin:
@@ -44,15 +44,6 @@ class SendMessagePage extends StatelessWidget {
                   SizedBox(
                     height: 45,
                   ),
-                  // const TextField(
-                  //   decoration: InputDecoration(
-                  //     hintText: 'Search contacts', suffixIcon: Icon(Icons.search),
-                  //     hintStyle: TextStyle(
-                  //       color: Color.fromARGB(255, 232, 232, 232),
-                  //     )
-                  //   ),
-                  // ),
-
                   Container(
                     // 5px margin from the bottom
                     child: Container(

@@ -18,58 +18,96 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Receive Message'),
-      ),
-      body: FutureBuilder<List<CameraDescription>>(
-        future: _camerasFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // App Logo and Welcome Text
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    child: Image.asset('assets/BareLogo.png'),
-                  ),
-                  const Text(
-                    'Welcome to the VLC Message App',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder<List<CameraDescription>>(
+          future: _camerasFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 50,
                     ),
-                  ),
-                  // Camera Preview
-                  Container(
-                    height: 300, // adjust this to fit your needs
-                    width: double.infinity,
-                    child: CameraPreviewWidget(
-                      camera: snapshot.data!.first,
+                    // App Logo and Welcome Text
+                    SizedBox(
+                      height: 80,
+                      child: Image.asset('assets/images/BareLogo.png'),
                     ),
-                  ),
-                  // Text Field
-                  const Padding(
-                    padding: EdgeInsets.all(16),
+                    Container(
+                      margin:
+                          EdgeInsets.only(top: 15.0), // specify the top margin
+                      child: Text(
+                        'Receive Message',
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    // Camera Preview
+                    Container(
+                      height: MediaQuery.of(context).size.height *
+                          0.52, // adjust this to fit your needs
+                      width: MediaQuery.of(context).size.width *
+                          0.9, // adjust this to fit your needs
+                      child: CameraPreviewWidget(
+                        camera: snapshot.data!.first,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    // Text Field
+                    Container(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    margin: EdgeInsets.only(
+                        top: 15, bottom: 20,left: 20, right: 20), // Adjust margins as needed
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(227, 255, 255,
+                          255), // Background color of the text box
+                      borderRadius: BorderRadius.circular(
+                          10.0), // Border radius of the text box
+                    ),
                     child: TextField(
+                      maxLines:
+                          null, // Set the number of lines for the text box
                       decoration: InputDecoration(
-                        hintText: 'Enter your message',
-                        border: OutlineInputBorder(),
+                        hintText:
+                            'View your message here...', // Placeholder text
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color:
+                                const Color.fromARGB(222, 158, 158, 158)), // Style for the placeholder text
+                        border: InputBorder
+                            .none, // Remove the default underline border
+                        contentPadding:
+                            EdgeInsets.all(10.0), // Padding inside the text box
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+                  ],
+                ),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
   }
 }
-
 
 class CameraPreviewWidget extends StatefulWidget {
   final CameraDescription camera;
