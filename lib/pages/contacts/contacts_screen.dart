@@ -42,7 +42,7 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
+              SizedBox(
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: ListView.separated(
                   padding: const EdgeInsets.only(left: 20, right: 20),
@@ -123,6 +123,13 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ),
             ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // TODO: Open the QR code scanner
+            },
+            backgroundColor: Theme.of(context).colorScheme.background,
+            child: const Icon(Icons.add),
           ),
         ),
       ],
