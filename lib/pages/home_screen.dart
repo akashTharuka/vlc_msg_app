@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vlc_msg_app/pages/StartUp.dart';
-import 'package:vlc_msg_app/pages/SendMessage.dart';
+// import 'package:vlc_msg_app/pages/StartUp.dart';
+// import 'package:vlc_msg_app/pages/SendMessage.dart';
 import 'package:vlc_msg_app/pages/ReceiveMessage.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
+import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/pages/onboarding_screen.dart';
 import 'package:vlc_msg_app/pages/send_msg_screen.dart';
 
@@ -181,7 +182,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          // TODO: Add message history functionality
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const MsgHistory()));
         },
         child: Text(
           'Message History',
