@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class SendMessagePage extends StatelessWidget {
   const SendMessagePage({super.key});
@@ -12,8 +11,8 @@ class SendMessagePage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image:
-                AssetImage('assets/images/background.jpg'), // replace with your image
+            image: AssetImage(
+                'assets/images/background.jpg'), // replace with your image
             fit: BoxFit.cover,
           ),
         ),
@@ -90,8 +89,8 @@ class SendMessagePage extends StatelessWidget {
                             'Enter your message here...', // Placeholder text
                         hintStyle: TextStyle(
                             fontWeight: FontWeight.normal,
-                            color:
-                                const Color.fromARGB(222, 158, 158, 158)), // Style for the placeholder text
+                            color: const Color.fromARGB(222, 158, 158,
+                                158)), // Style for the placeholder text
                         border: InputBorder
                             .none, // Remove the default underline border
                         contentPadding:
@@ -129,7 +128,6 @@ class SendMessagePage extends StatelessWidget {
                 ],
               ),
             ),
-
           ],
         ),
       ),
