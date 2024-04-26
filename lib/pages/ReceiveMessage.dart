@@ -80,12 +80,16 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
                           10.0), // Border radius of the text box
                     ),
                     child: TextField(
+                      style: TextStyle(
+                        fontSize: 15.0
+                      ),
                       maxLines:
                           null, // Set the number of lines for the text box
                       decoration: InputDecoration(
                         hintText:
                             'View your message here...', // Placeholder text
                         hintStyle: TextStyle(
+                            fontSize: 15.0,
                             fontWeight: FontWeight.normal,
                             color:
                                 const Color.fromARGB(222, 158, 158, 158)), // Style for the placeholder text
