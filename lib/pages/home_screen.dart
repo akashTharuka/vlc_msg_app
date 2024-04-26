@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
 import 'package:vlc_msg_app/pages/onboarding_screen.dart';
 import 'package:vlc_msg_app/pages/ReceiveMessage.dart';
+import 'package:vlc_msg_app/pages/qr_screen.dart';
 import 'package:vlc_msg_app/pages/send_msg_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -53,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    qrScanner(context),
+                    qrGenerator(context),
                     logout(context)
                   ],
                 ),
@@ -109,7 +110,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  SizedBox qrScanner(context) {
+  SizedBox qrGenerator(context) {
     return SizedBox(
       width: 50.0,
       height: 50.0,
@@ -117,7 +118,11 @@ class HomeScreen extends StatelessWidget {
         icon: const Icon(Icons.qr_code),
         color: Theme.of(context).colorScheme.background,
         onPressed: () {
-          // TODO: Add view QR code functionality
+          // navigate to the screen with the QR image
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const QRScreen()),
+          );
         },
       ),
     );

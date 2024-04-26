@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
@@ -12,6 +14,19 @@ class ContactScreen extends StatefulWidget {
 
 class _ContactScreenState extends State<ContactScreen> {
   final contacts = Contacts().getContacts();
+  String qrResult = "Not Yet Scanned";
+
+  Future<void> scanQRCode() async {
+    try {
+      final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      if (!mounted) return;
+      setState(() {
+        qrResult = qrCode.toString();
+      });
+    } on PlatformException {
+      qrResult = 'Failed to read QR code.';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,9 +140,7 @@ class _ContactScreenState extends State<ContactScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              // TODO: Open the QR code scanner
-            },
+            onPressed: scanQRCode,
             backgroundColor: Theme.of(context).colorScheme.background,
             child: const Icon(Icons.add),
           ),
