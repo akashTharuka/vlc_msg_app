@@ -42,6 +42,8 @@ dependencies:
   sqflite_common_ffi: ^2.3.3
   pointycastle: ^3.8.0
   fast_rsa: ^3.6.1
+  torch_light: ^1.0.0
+  camera: ^0.10.5+9
 
 dev_dependencies:
   flutter_test:
