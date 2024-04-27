@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts.dart';
+import 'package:vlc_msg_app/pages/contacts/contacts_info.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -13,19 +14,41 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-  final contacts = Contacts().getContacts();
-  String qrResult = "Not Yet Scanned";
+  final _contacts = Contacts().getContacts();
+  List<ContactsInfo> _filteredContacts = [];
 
-  Future<void> scanQRCode() async {
+  String _qrResult = "Not Yet Scanned";
+
+  Future<void> _scanQRCode() async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
       if (!mounted) return;
       setState(() {
-        qrResult = qrCode.toString();
+        _qrResult = qrCode.toString();
       });
     } on PlatformException {
-      qrResult = 'Failed to read QR code.';
+      _qrResult = 'Failed to read QR code.';
     }
+  }
+
+  void _searchContacts(String query) {
+    List<ContactsInfo> searchedContacts = [];
+    if (query.isEmpty) {
+      searchedContacts = _contacts;
+    }
+    else {
+      searchedContacts = _contacts.where((contact) => contact.name.toLowerCase().contains(query.toLowerCase())).toList();
+    }
+
+    setState(() {
+      _filteredContacts = searchedContacts;
+    });
+  }
+
+  @override
+  void initState() {
+    _filteredContacts = _contacts;
+    super.initState();
   }
 
   @override
@@ -57,17 +80,17 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
+              Flexible(
                 child: ListView.separated(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   shrinkWrap: true,
-                  itemCount: contacts.length,
+                  itemCount: _filteredContacts.length,
                   separatorBuilder: (context, index) {
                     return const SizedBox(height: 10);
                   },
                   itemBuilder: (context, index) {
                     return Container(
+                      key: ValueKey(_filteredContacts[index].publicKey),
                       height: 100,
                       decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.onSecondary,
@@ -95,7 +118,7 @@ class _ContactScreenState extends State<ContactScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                contacts[index].name[0],
+                                _filteredContacts[index].name[0],
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
@@ -114,7 +137,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    contacts[index].name,
+                                    _filteredContacts[index].name,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
@@ -124,7 +147,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    contacts[index].publicKey,
+                                    _filteredContacts[index].publicKey,
                                     style: Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ],
@@ -140,7 +163,7 @@ class _ContactScreenState extends State<ContactScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: scanQRCode,
+            onPressed: _scanQRCode,
             backgroundColor: Theme.of(context).colorScheme.background,
             child: const Icon(Icons.add),
           ),
@@ -187,6 +210,13 @@ class _ContactScreenState extends State<ContactScreen> {
         ],
       ),
       child: TextField(
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]'))
+        ],
+        keyboardType: TextInputType.text,
+        onChanged: (value) {
+          _searchContacts(value);
+        },
         style: Theme.of(context).textTheme.bodyMedium,
         decoration: InputDecoration(
           filled: true,
