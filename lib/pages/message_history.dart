@@ -115,12 +115,13 @@ class _MsgHistoryState extends State<MsgHistory> {
 ),
                             title: Text(
                               _foundUsers[index]['name'],
-                              style: TextStyle(color: const Color.fromRGBO(0, 0, 0, 0.55)),
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             subtitle: Text(
                               '${_foundUsers[index]["msg_type"].toString()} message',
                               style: TextStyle(color: const Color.fromRGBO(86, 154, 163,
-                                  1)),
+                                  1),
+                                  fontSize: 13),
                             ),
                           ),
                         ),
