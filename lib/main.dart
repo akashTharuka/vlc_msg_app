@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vlc_msg_app/pages/splash_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
-import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/pages/splash_screen.dart';
 
 Future<void> main() async {
