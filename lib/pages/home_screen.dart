@@ -7,6 +7,7 @@ import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/pages/onboarding_screen.dart';
 import 'package:vlc_msg_app/pages/send_msg_screen.dart';
+import 'package:vlc_msg_app/pages/settings.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -36,7 +37,7 @@ class HomeScreen extends StatelessWidget {
               IconButton(
                 icon: Image.asset('assets/icons/settings.png'),
                 onPressed: () {
-                  // TODO: Navigate to settings screen
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
                 },
               ),
             ],
@@ -104,7 +105,7 @@ class HomeScreen extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
-              Colors.white.withOpacity(0.8)),
+              Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(
               Colors.black.withOpacity(0.55)),
           shape:
@@ -147,7 +148,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 25),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -173,7 +174,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -199,7 +200,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -225,7 +226,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15, top: 18),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)), // set opacity here
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)), // set opacity here
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape:MaterialStateProperty.all(
             RoundedRectangleBorder(
