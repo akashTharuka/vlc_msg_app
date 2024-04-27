@@ -7,7 +7,7 @@ import 'package:vlc_msg_app/pages/contacts/contacts_info.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
-  const ContactScreen({super.key});
+  const ContactScreen({Key? key}) : super(key: key);
 
   @override
   State<ContactScreen> createState() => _ContactScreenState();
@@ -55,16 +55,14 @@ class _ContactScreenState extends State<ContactScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // The Container with the background image
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/background.jpg'), // replace with your image
+              image: AssetImage('assets/images/background.jpg'),
               fit: BoxFit.cover,
             ),
           ),
         ),
-        // The Scaffold with your widgets
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: appBar(context),
@@ -93,25 +91,26 @@ class _ContactScreenState extends State<ContactScreen> {
                       key: ValueKey(_filteredContacts[index].publicKey),
                       height: 100,
                       decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary
-                                    .withOpacity(0.11),
-                                offset: const Offset(0, 10),
-                                blurRadius: 40,
-                                spreadRadius: 0),
-                          ]),
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withOpacity(0.11),
+                              offset: const Offset(0, 10),
+                              blurRadius: 40,
+                              spreadRadius: 0),
+                        ]
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Container(
                             height: 50,
                             width: 50,
-                            margin: const EdgeInsets.only(left: 10, right: 20),
+                            margin: const EdgeInsets.only(left: 20, right: 20),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.background,
                               shape: BoxShape.circle,
@@ -121,7 +120,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                 _filteredContacts[index].name[0],
                                 style: Theme.of(context)
                                     .textTheme
-                                    .displaySmall!
+                                    .titleSmall!
                                     .copyWith(
                                       fontWeight: FontWeight.w700,
                                       color: Theme.of(context).colorScheme.onSecondary,
@@ -140,9 +139,10 @@ class _ContactScreenState extends State<ContactScreen> {
                                     _filteredContacts[index].name,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodyMedium!
+                                        .titleSmall!
                                         .copyWith(
                                           fontWeight: FontWeight.w700,
+                                          color: Theme.of(context).colorScheme.background,
                                         ),
                                   ),
                                   const SizedBox(height: 5),
