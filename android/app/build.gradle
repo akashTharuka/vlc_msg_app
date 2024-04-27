@@ -45,11 +45,7 @@ android {
         applicationId "com.example.vlc_msg_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-<<<<<<< HEAD
-        minSdkVersion 21
-=======
         minSdkVersion 23
->>>>>>> 938eeba7a0d4f4dbe623a6327acc2c086c235c45
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

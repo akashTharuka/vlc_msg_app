@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts.dart';
+import 'package:vlc_msg_app/pages/contacts/contacts_info.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -11,7 +14,42 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-  final contacts = Contacts().getContacts();
+  final _contacts = Contacts().getContacts();
+  List<ContactsInfo> _filteredContacts = [];
+
+  String _qrResult = "Not Yet Scanned";
+
+  Future<void> _scanQRCode() async {
+    try {
+      final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      if (!mounted) return;
+      setState(() {
+        _qrResult = qrCode.toString();
+      });
+    } on PlatformException {
+      _qrResult = 'Failed to read QR code.';
+    }
+  }
+
+  void _searchContacts(String query) {
+    List<ContactsInfo> searchedContacts = [];
+    if (query.isEmpty) {
+      searchedContacts = _contacts;
+    }
+    else {
+      searchedContacts = _contacts.where((contact) => contact.name.toLowerCase().contains(query.toLowerCase())).toList();
+    }
+
+    setState(() {
+      _filteredContacts = searchedContacts;
+    });
+  }
+
+  @override
+  void initState() {
+    _filteredContacts = _contacts;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,93 +78,94 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Expanded( // Use Expanded to allow the ListView to take remaining space
-                child: SingleChildScrollView( // Wrap the ListView in SingleChildScrollView
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      shrinkWrap: true,
-                      itemCount: contacts.length,
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 10);
-                      },
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.background,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary
-                                    .withOpacity(0.11),
-                                offset: const Offset(0, 10),
-                                blurRadius: 40,
-                                spreadRadius: 0,
+              Flexible(
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  shrinkWrap: true,
+                  itemCount: _filteredContacts.length,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 10);
+                  },
+                  itemBuilder: (context, index) {
+                    return Container(
+                      key: ValueKey(_filteredContacts[index].publicKey),
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withOpacity(0.11),
+                              offset: const Offset(0, 10),
+                              blurRadius: 40,
+                              spreadRadius: 0),
+                        ]
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.background,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                _filteredContacts[index].name[0],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall!
+                                    .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context).colorScheme.onSecondary,
+                                    ),
                               ),
-                            ],
+                            ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                margin: const EdgeInsets.only(left: 10, right: 20),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.onSecondary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    contacts[index].name[0],
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _filteredContacts[index].name,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .displaySmall!
+                                        .titleSmall!
                                         .copyWith(
                                           fontWeight: FontWeight.w700,
                                           color: Theme.of(context).colorScheme.background,
                                         ),
                                   ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        contacts[index].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        contacts[index].publicKey,
-                                        style: Theme.of(context).textTheme.bodySmall,
-                                      ),
-                                    ],
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    _filteredContacts[index].publicKey,
+                                    style: Theme.of(context).textTheme.bodySmall,
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _scanQRCode,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            child: const Icon(Icons.add),
           ),
         ),
       ],
@@ -171,6 +210,13 @@ class _ContactScreenState extends State<ContactScreen> {
         ],
       ),
       child: TextField(
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]'))
+        ],
+        keyboardType: TextInputType.text,
+        onChanged: (value) {
+          _searchContacts(value);
+        },
         style: Theme.of(context).textTheme.bodyMedium,
         decoration: InputDecoration(
           filled: true,
