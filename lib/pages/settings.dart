@@ -21,7 +21,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      
       children: <Widget>[
         // The Container with the background image
         Container(
@@ -164,20 +163,22 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-
 AppBar appBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent, // here too
-      elevation: 0, // and here
-      leading: IconButton(
-          icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          color: Theme.of(context).colorScheme.background,
-      ),
-    );
-  }
+  return AppBar(
+    backgroundColor: Colors.transparent, // here too
+    elevation: 0, // and here
+    leading: IconButton(
+      icon: const Icon(Icons.keyboard_arrow_left),
+      // onPressed: () {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+      //   );
+      // },
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      color: Theme.of(context).colorScheme.background,
+    ),
+  );
+}

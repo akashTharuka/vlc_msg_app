@@ -21,7 +21,8 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Future<void> _scanQRCode() async {
     try {
-      final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      final qrCode = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
       if (!mounted) return;
       setState(() {
         _qrResult = qrCode.toString();
@@ -35,9 +36,11 @@ class _ContactScreenState extends State<ContactScreen> {
     List<ContactsInfo> searchedContacts = [];
     if (query.isEmpty) {
       searchedContacts = _contacts;
-    }
-    else {
-      searchedContacts = _contacts.where((contact) => contact.name.toLowerCase().contains(query.toLowerCase())).toList();
+    } else {
+      searchedContacts = _contacts
+          .where((contact) =>
+              contact.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     }
 
     setState(() {
@@ -91,19 +94,19 @@ class _ContactScreenState extends State<ContactScreen> {
                       key: ValueKey(_filteredContacts[index].publicKey),
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  .withOpacity(0.11),
-                              offset: const Offset(0, 10),
-                              blurRadius: 40,
-                              spreadRadius: 0),
-                        ]
-                      ),
+                          color: Theme.of(context).colorScheme.background,
+                          // color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary
+                                    .withOpacity(0.11),
+                                offset: const Offset(0, 10),
+                                blurRadius: 40,
+                                spreadRadius: 0),
+                          ]),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -123,7 +126,9 @@ class _ContactScreenState extends State<ContactScreen> {
                                     .titleSmall!
                                     .copyWith(
                                       fontWeight: FontWeight.w700,
-                                      color: Theme.of(context).colorScheme.background,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
                                     ),
                               ),
                             ),
@@ -142,13 +147,16 @@ class _ContactScreenState extends State<ContactScreen> {
                                         .titleSmall!
                                         .copyWith(
                                           fontWeight: FontWeight.w700,
-                                          color: Theme.of(context).colorScheme.onSecondary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSecondary,
                                         ),
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
                                     _filteredContacts[index].publicKey,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -177,14 +185,17 @@ class _ContactScreenState extends State<ContactScreen> {
       backgroundColor: Colors.transparent, // here too
       elevation: 0, // and here
       leading: IconButton(
-          icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          color: Theme.of(context).colorScheme.onSecondary,
+        icon: const Icon(Icons.keyboard_arrow_left),
+        // onPressed: () {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+        //   );
+        // },
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        color: Theme.of(context).colorScheme.onSecondary,
       ),
       actions: [
         IconButton(

@@ -19,90 +19,88 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/background.jpg'),
-              fit: BoxFit.cover,
-            ),
+      Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
-        FutureBuilder<List<CameraDescription>>(
-          future: _camerasFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    appBar(context),
-                    SizedBox(
-                      height: 80,
-                      child: Image.asset('assets/images/BareLogo.png'),
+      ),
+      FutureBuilder<List<CameraDescription>>(
+        future: _camerasFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  appBar(context),
+                  SizedBox(
+                    height: 80,
+                    child: Image.asset('assets/images/BareLogo.png'),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 5.0), // specify the top margin
+                    child: Text(
+                      'Receive Message',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white),
                     ),
-                    Container(
-                      margin:
-                          EdgeInsets.only(top: 5.0), // specify the top margin
-                      child: Text(
-                        'Receive Message',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white),
-                      ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Camera Preview
+                  Container(
+                    height: MediaQuery.of(context).size.height *
+                        0.52, // adjust this to fit your needs
+                    width: MediaQuery.of(context).size.width *
+                        0.9, // adjust this to fit your needs
+                    child: CameraPreviewWidget(
+                      camera: snapshot.data!.first,
                     ),
-                    SizedBox(
-                      height: 20,
+                  ),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  // Text Field
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    margin: EdgeInsets.only(
+                        top: 15, bottom: 20, left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(227, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    // Camera Preview
-                    Container(
-                      height: MediaQuery.of(context).size.height *
-                          0.52, // adjust this to fit your needs
-                      width: MediaQuery.of(context).size.width *
-                          0.9, // adjust this to fit your needs
-                      child: CameraPreviewWidget(
-                        camera: snapshot.data!.first,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 7,
-                    ),
-                    // Text Field
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.15,
-                      margin: EdgeInsets.only(
-                          top: 15, bottom: 20, left: 20, right: 20),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(227, 255, 255, 255),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: TextField(
-                          style: TextStyle(fontSize: 15.0),
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: 'View your message here...',
-                            hintStyle: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.normal,
-                                color:
-                                    const Color.fromARGB(222, 158, 158, 158)),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10.0),
-                          ),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: TextField(
+                        style: TextStyle(fontSize: 15.0),
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          hintText: 'View your message here...',
+                          hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.normal,
+                              color: const Color.fromARGB(222, 158, 158, 158)),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.all(10.0),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      ]);
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    ]);
     // );
   }
 }
@@ -161,11 +159,14 @@ AppBar appBar(BuildContext context) {
     elevation: 0, // and here
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
+      // onPressed: () {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+      //   );
+      // },
       onPressed: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        Navigator.pop(context);
       },
       color: Theme.of(context).colorScheme.background,
     ),

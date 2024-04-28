@@ -17,7 +17,8 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/background.jpg'), // replace with your image
+              image: AssetImage(
+                  'assets/images/background.jpg'), // replace with your image
               fit: BoxFit.cover,
             ),
           ),
@@ -66,13 +67,13 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
       margin: const EdgeInsets.only(bottom: 20, top: 20),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
-          foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            )
-          ),
+          backgroundColor:
+              MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          foregroundColor:
+              MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          )),
         ),
         onPressed: () {
           // TODO: send message logic here
@@ -145,10 +146,7 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
           prefixIcon: IconButton(
             icon: Icon(
               Icons.search,
-              color: Theme.of(context)
-                  .colorScheme
-                  .secondary
-                  .withOpacity(0.4),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
             ),
             onPressed: () {
               // TODO: navigate to the select_contacts page
@@ -196,14 +194,17 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
       backgroundColor: Colors.transparent, // here too
       elevation: 0, // and here
       leading: IconButton(
-          icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          color: Theme.of(context).colorScheme.background,
+        icon: const Icon(Icons.keyboard_arrow_left),
+        // onPressed: () {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+        //   );
+        // },
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        color: Theme.of(context).colorScheme.background,
       ),
       // actions: [
       //   IconButton(
