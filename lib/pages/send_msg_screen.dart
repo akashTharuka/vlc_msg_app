@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:vlc_msg_app/utils/transmitter.dart';
 
 class SendMsgScreen extends StatefulWidget {
   const SendMsgScreen({super.key});
@@ -9,6 +13,43 @@ class SendMsgScreen extends StatefulWidget {
 }
 
 class _SendMsgScreenState extends State<SendMsgScreen> {
+  List<Contact> _contacts = [];
+  String error = "";
+  String? _selectedContactPublicKey;
+  String? _message;
+  bool _isValid = false;
+
+  Future<void> _getContacts() async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      _contacts = await dbHelper.getContacts();
+      setState(() {
+        _contacts = _contacts;
+      });
+    } on Exception catch (e) {
+      setState(() {
+        error = e.toString();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getContacts();
+  }
+
+  void _updateIsValid() {
+    setState(() {
+      _isValid = _selectedContactPublicKey != null && (_message?.isNotEmpty ?? false);
+    });
+  }
+
+  void _sendMessage() {
+    print(_selectedContactPublicKey);
+    Transmitter.transmit('011111101100011101100000');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -31,24 +72,52 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                addRecipient(),
-                Row(
-                  children: [
-                    InputChip(
-                      label: const Text('John Doe'),
-                      deleteIcon: const Icon(
-                        Icons.close,
-                        size: 15,
-                        color: Colors.red,
+                DropdownSearch<String>(
+                  popupProps: const PopupProps.menu(
+                    showSelectedItems: true,
+                    showSearchBox: true,
+                  ),
+                  items: _contacts.map((contact) => contact.name).toList(),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(15),
+                      hintText: 'Add Recipient',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontSize: 14,
                       ),
-                      onDeleted: () {},
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
                       ),
                     ),
-                  ],
+                  ),
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      final selectedContact = _contacts.firstWhere((contact) => contact.name == value);
+                      _selectedContactPublicKey = selectedContact.publicKey;
+                    } else {
+                      _selectedContactPublicKey = null;
+                    }
+                    _updateIsValid();
+                  },
+                  validator: (String? item) {
+                    if (item == null) {
+                      return "Required field";
+                    } else {
+                      return null;
+                    }
+                  },
+                  selectedItem: null,
                 ),
                 msgInputField(),
                 sendButton(context),
@@ -74,12 +143,17 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
             )
           ),
         ),
-        onPressed: () {
-          // TODO: send message logic here
-        },
+        onPressed: _isValid ? _sendMessage : null,
         child: Text(
           'Send',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: _isValid 
+            ? Theme.of(context).textTheme.labelSmall!.copyWith(
+              fontWeight: FontWeight.w700
+            ) 
+            : Theme.of(context).textTheme.labelSmall!.copyWith(
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onSecondary
+            ),
         ),
       ),
     );
@@ -114,7 +188,11 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
               borderSide: BorderSide.none,
             ),
           ),
-          maxLines: 15,
+          maxLines: 25,
+          onChanged: (String value) {
+            _message = value;
+            _updateIsValid();
+          }
         ),
       ),
     );
