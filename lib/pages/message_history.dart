@@ -3,7 +3,7 @@ import 'package:vlc_msg_app/models/msg.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 
 class MsgHistory extends StatefulWidget {
-  const MsgHistory({Key? key}) : super(key: key);
+  const MsgHistory({super.key});
 
   @override
   _MsgHistoryState createState() => _MsgHistoryState();
@@ -57,81 +57,69 @@ class _MsgHistoryState extends State<MsgHistory> {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: appBar(context),
-          body: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Image.asset('assets/images/BareLogo.png'),
-                  ),
-                  Container(
-                    margin:
-                        EdgeInsets.only(top: 10.0), // specify the top margin
-                    child: Text(
-                      'Message History',
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white),
-                    ),
-                  ),
-                  Expanded(
-                    child: _foundUsers.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: _foundUsers.length,
-                            itemBuilder: (context, index) => Card(
-                              key: ValueKey(_foundUsers[index]["id"]),
-                              color: Colors.white,
-                              elevation: 4,
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                leading: Text(
-                                  _foundUsers[index]["id"].toString(),
-                                  style: const TextStyle(
-                                      fontSize: 24,
-                                      color: Color.fromRGBO(0, 0, 0, 0.55)),
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.delete), // Change icons based on text
-                                  color: const Color.fromRGBO(49, 76, 79, 1),
-                                  onPressed: () {
-                                    setState(() {
-                                      _databaseHelper.deleteMessageById(
-                                          _foundUsers[index]["id"]);
-                                      _fetchMessages();
-                                    });
-                                  },
-                                ),
-                                title: Text(
-                                  // _foundUsers[index]['timestamp'].toString(),
-                                  _foundUsers[index]["text"].toString(),
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                subtitle: Text(
-                                  // '${_foundUsers[index]["text"].toString()} message',
-                                  _foundUsers[index]['timestamp'].toString(),
-                                  style: TextStyle(
-                                      color:
-                                          const Color.fromRGBO(86, 154, 163, 1),
-                                      fontSize: 13),
-                                ),
+          body: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 80,
+                  child: Image.asset('assets/images/BareLogo.png'),
+                ),
+                Expanded(
+                  child: _foundUsers.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: _foundUsers.length,
+                          itemBuilder: (context, index) => Card(
+                            key: ValueKey(_foundUsers[index]["id"]),
+                            color: Colors.white,
+                            elevation: 4,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              leading: Text(
+                                _foundUsers[index]["id"].toString(),
+                                style: const TextStyle(
+                                    fontSize: 24,
+                                    color: Color.fromRGBO(0, 0, 0, 0.55)),
                               ),
-                            ),
-                          )
-                        : Container(
-                            height: double.infinity,
-                            child: Center(
-                              child: const Text(
-                                'No results found',
-                                style: TextStyle(fontSize: 17),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete), // Change icons based on text
+                                color: const Color.fromRGBO(49, 76, 79, 1),
+                                onPressed: () {
+                                  setState(() {
+                                    _databaseHelper.deleteMessageById(
+                                        _foundUsers[index]["id"]);
+                                    _fetchMessages();
+                                  });
+                                },
+                              ),
+                              title: Text(
+                                // _foundUsers[index]['timestamp'].toString(),
+                                _foundUsers[index]["text"].toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              subtitle: Text(
+                                // '${_foundUsers[index]["text"].toString()} message',
+                                _foundUsers[index]['timestamp'].toString(),
+                                style: const TextStyle(
+                                    color:
+                                        Color.fromRGBO(86, 154, 163, 1),
+                                    fontSize: 13),
                               ),
                             ),
                           ),
-                  ),
-                ],
-              ),
+                        )
+                      // ignore: prefer_const_constructors
+                      : SizedBox(
+                          height: double.infinity,
+                          child: const Center(
+                            child: Text(
+                              'No results found',
+                              style: TextStyle(fontSize: 17),
+                            ),
+                          ),
+                        ),
+                ),
+              ],
             ),
           ),
         )
@@ -144,6 +132,10 @@ AppBar appBar(BuildContext context) {
   return AppBar(
     backgroundColor: Colors.transparent, // here too
     elevation: 0, // and here
+    title: Text(
+      'Message History',
+      style: Theme.of(context).textTheme.titleMedium,
+    ),
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
       // onPressed: () {

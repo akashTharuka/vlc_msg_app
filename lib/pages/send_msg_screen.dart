@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
+import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:vlc_msg_app/utils/encoder.dart';
+import 'package:vlc_msg_app/utils/rsa.dart';
 import 'package:vlc_msg_app/utils/transmitter.dart';
 
 class SendMsgScreen extends StatefulWidget {
@@ -45,9 +49,21 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
     });
   }
 
-  void _sendMessage() {
-    print(_selectedContactPublicKey);
-    Transmitter.transmit('011111101100011101100000');
+  void _sendMessage() async {
+    final String encryptedMsg = await RSAUtils.encryptRSA(_message, _selectedContactPublicKey);
+    final String encodedMsg = Encoder.encodeToBinary(encryptedMsg);
+
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    User user = await dbHelper.getUser();
+
+    print("");
+
+    final String decodedMsg = Encoder.decodeFromBinary(encodedMsg);
+    final String decryptedMsg = await RSAUtils.decryptRSA(decodedMsg, user.privateKey);
+
+    print(decryptedMsg);
+    // Transmitter.transmit(encodedMsg);
+    // Transmitter.transmit('011111101100011101100000');
   }
 
   @override
