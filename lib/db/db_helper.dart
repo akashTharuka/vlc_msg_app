@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/models/msg.dart';
+import 'package:vlc_msg_app/utils/rsa.dart';
 
 class DatabaseHelper {
 
@@ -92,6 +93,10 @@ class DatabaseHelper {
   // Save User
   Future<int> saveUser(User user) async {
 
+    final Map<String, String> keyPair = await RSAUtils.generateKeyPair();
+    user.privateKey = keyPair['privateKey']!;
+    user.publicKey = keyPair['publicKey']!;
+
     try {
 
       Database db = await this.db;
@@ -132,12 +137,12 @@ class DatabaseHelper {
       if (users.isNotEmpty) {
         log('User found');
         //log user
-        log(users.first.toString());
+        // log(users.first.toString());
         return User.fromMap(users.first);
       }
 
-      log('No exsisting User found');
-      throw Exception('No exsisting User found');
+      log('No existing User found');
+      throw Exception('No existing User found');
     } 
     catch (e) {
 
@@ -196,11 +201,11 @@ class DatabaseHelper {
       List<Map<String, dynamic>> contacts = await db.query('contacts');
 
       if (contacts.isNotEmpty) {
-        return contacts.map((contact) => Contact.fromMap(contact)).toList() as List<Contact>;
+        return contacts.map((contact) => Contact.fromMap(contact)).toList();
       }
 
-      log('No exsisting Contacts found');
-      throw Exception('No exsisting Contacts found');
+      log('No Existing Contacts Found');
+      throw Exception('No Existing Contacts Found');
     } 
     catch (e) {
 

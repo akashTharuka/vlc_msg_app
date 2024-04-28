@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:vlc_msg_app/pages/contacts/contacts.dart';
-import 'package:vlc_msg_app/pages/contacts/contacts_info.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -14,25 +18,52 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-  final _contacts = Contacts().getContacts();
-  List<ContactsInfo> _filteredContacts = [];
+  List<Contact> _filteredContacts = [];
+  List<Contact> _contacts = [];
+  String error = "";
 
-  String _qrResult = "Not Yet Scanned";
+  @override
+  void initState() {
+    super.initState();
+    _getContacts();
+  }
+
+  Future<void> _getContacts() async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      _contacts = await dbHelper.getContacts();
+      setState(() {
+        _filteredContacts = _contacts;
+      });
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+  }
 
   Future<void> _scanQRCode() async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      
       if (!mounted) return;
+
+      Map<String, dynamic> contact = jsonDecode(qrCode);
+      Contact newContact = Contact(
+        name: contact['name'], 
+        publicKey: contact['publicKey']
+      );
+      final DatabaseHelper dbHelper = DatabaseHelper();
+      await dbHelper.saveContact(newContact);
+      await _getContacts();
+    } on Exception catch (e) {
       setState(() {
-        _qrResult = qrCode.toString();
+        error = e.toString();
       });
-    } on PlatformException {
-      _qrResult = 'Failed to read QR code.';
+      print(error);
     }
   }
 
   void _searchContacts(String query) {
-    List<ContactsInfo> searchedContacts = [];
+    List<Contact> searchedContacts = [];
     if (query.isEmpty) {
       searchedContacts = _contacts;
     }
@@ -43,12 +74,6 @@ class _ContactScreenState extends State<ContactScreen> {
     setState(() {
       _filteredContacts = searchedContacts;
     });
-  }
-
-  @override
-  void initState() {
-    _filteredContacts = _contacts;
-    super.initState();
   }
 
   @override
@@ -69,97 +94,23 @@ class _ContactScreenState extends State<ContactScreen> {
           body: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    searchContact(),
-                  ],
-                ),
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: searchContact(),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               Flexible(
                 child: ListView.separated(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   shrinkWrap: true,
                   itemCount: _filteredContacts.length,
                   separatorBuilder: (context, index) {
-                    return const SizedBox(height: 10);
+                    return const SizedBox(height: 5);
                   },
                   itemBuilder: (context, index) {
-                    return Container(
-                      key: ValueKey(_filteredContacts[index].publicKey),
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  .withOpacity(0.11),
-                              offset: const Offset(0, 10),
-                              blurRadius: 40,
-                              spreadRadius: 0),
-                        ]
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            margin: const EdgeInsets.only(left: 20, right: 20),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                _filteredContacts[index].name[0],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: Theme.of(context).colorScheme.onSecondary,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _filteredContacts[index].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: Theme.of(context).colorScheme.background,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    _filteredContacts[index].publicKey,
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    return contactCard(index, context);
                   },
                 ),
-              ),
+              )
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -172,10 +123,60 @@ class _ContactScreenState extends State<ContactScreen> {
     );
   }
 
+  Card contactCard(int index, BuildContext context) {
+    return Card(
+      key: ValueKey(_filteredContacts[index].id),
+      color: Theme.of(context).colorScheme.background.withOpacity(0.8),
+      elevation: 4,
+      child: ListTile(
+        leading: Container(
+          height: 50,
+          width: 50,
+          margin: const EdgeInsets.only(top: 10, bottom: 10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              _filteredContacts[index].name[0],
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+            ),
+          ),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {},
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        title: Text(
+          _filteredContacts[index].name,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall!
+              .copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.surface,
+              ),
+        ),
+      ),
+    );
+  }
+
   AppBar appBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent, // here too
       elevation: 0, // and here
+      title: Text(
+        'Contacts',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
       leading: IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
           onPressed: () {
@@ -186,15 +187,6 @@ class _ContactScreenState extends State<ContactScreen> {
           },
           color: Theme.of(context).colorScheme.background,
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-            // TODO: Navigate to settings screen
-          },
-          color: Theme.of(context).colorScheme.background,
-        ),
-      ],
     );
   }
 
