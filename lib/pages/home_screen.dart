@@ -57,8 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // The Scaffold with your widgets
         Scaffold(
-          backgroundColor:
-              Colors.transparent, // it's important to make it transparent
+          backgroundColor: Colors.transparent, // it's important to make it transparent
           appBar: appBar(context),
           body: Container(
             alignment: Alignment.center,
