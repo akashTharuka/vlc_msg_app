@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/models/msg.dart';
+import 'package:vlc_msg_app/utils/rsa.dart';
 
 class DatabaseHelper {
 
@@ -92,6 +93,10 @@ class DatabaseHelper {
   // Save User
   Future<int> saveUser(User user) async {
 
+    final Map<String, String> keyPair = await RSAUtils.generateKeyPair();
+    user.privateKey = keyPair['privateKey']!;
+    user.publicKey = keyPair['publicKey']!;
+
     try {
 
       Database db = await this.db;
@@ -132,7 +137,7 @@ class DatabaseHelper {
       if (users.isNotEmpty) {
         log('User found');
         //log user
-        log(users.first.toString());
+        // log(users.first.toString());
         return User.fromMap(users.first);
       }
 

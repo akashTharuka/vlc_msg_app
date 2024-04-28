@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -10,7 +12,43 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+
+  final _controller = TextEditingController();
+
   bool _checkboxValue = false;
+  bool _validate = false;
+  bool _isButtonEnabled = false;
+
+  String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_checkInput);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _checkInput() {
+    setState(() {
+      _validate = _controller.text.isEmpty || !isAlphanumeric(_controller.text) || _controller.text.length < 3 || _controller.text.length > 20;
+      _isButtonEnabled = !_validate;
+    });
+  }
+
+  bool isAlphanumeric(String input) {
+    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+    return alphanumeric.hasMatch(input);
+  }
+
+  void _saveUser(User user) async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    dbHelper.saveUser(user);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Container(
                         margin: const EdgeInsets.only(
                             top: 70,
-                            bottom: 70.0), // Add a bottom margin of 20 pixels
+                            bottom: 50.0), // Add a bottom margin of 20 pixels
                         child: SizedBox(
                           width: 220.0, // specify the width
                           height: 220.0, // specify the height
@@ -72,14 +110,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20), // Pushes the TextField down
+                      const SizedBox(height: 10), // Pushes the TextField down
                       Container(
                         margin: const EdgeInsets.only(
-                          bottom: 50.0,
+                          bottom: 10.0,
                         ), // 5px margin from the bottom
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 30), // Adjust margin as needed
                           child: TextField(
+                            controller: _controller,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(15),
@@ -88,6 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 color: Theme.of(context).colorScheme.onSecondary,
                                 fontSize: 14,
                               ),
+                              errorText: _validate ? 'Value Can\'t Be Empty' : null,
                               filled: true,
                               fillColor: Theme.of(context).colorScheme.onSurface, // This will change the text field color
                               border: OutlineInputBorder(
@@ -139,20 +179,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         borderRadius: BorderRadius.circular(10),
                       )),
                     ),
-                    onPressed: () async {
+                    onPressed: _isButtonEnabled ? () async {
                       final prefs = await SharedPreferences.getInstance();
                       prefs.setBool('onboarding', true);
 
                       if (!mounted) return;
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      final User user = User(
+                        name: _controller.text,
+                        privateKey: '',
+                        publicKey: '',
+                        mobileUnlock: _checkboxValue ? 1 : 0,
                       );
-                    },
+
+                      try {
+                        _saveUser(user);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        );
+                      } on Exception catch (e) {
+                        setState(() {
+                          error = e.toString();
+                        });
+                      }
+
+                    } : null,
                     child: Text(
                       'Get Started',
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: _isButtonEnabled 
+                        ? Theme.of(context).textTheme.labelSmall!.copyWith(
+                          fontWeight: FontWeight.w700
+                        ) 
+                        : Theme.of(context).textTheme.labelSmall!.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).colorScheme.onSecondary
+                        ),
                     ),
                   ),
                 ),
