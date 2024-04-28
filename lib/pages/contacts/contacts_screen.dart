@@ -62,9 +62,11 @@ class _ContactScreenState extends State<ContactScreen> {
     List<Contact> searchedContacts = [];
     if (query.isEmpty) {
       searchedContacts = _contacts;
-    }
-    else {
-      searchedContacts = _contacts.where((contact) => contact.name.toLowerCase().contains(query.toLowerCase())).toList();
+    } else {
+      searchedContacts = _contacts
+          .where((contact) =>
+              contact.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     }
 
     setState(() {
@@ -174,14 +176,17 @@ class _ContactScreenState extends State<ContactScreen> {
         style: Theme.of(context).textTheme.titleMedium,
       ),
       leading: IconButton(
-          icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          color: Theme.of(context).colorScheme.background,
+        icon: const Icon(Icons.keyboard_arrow_left),
+        // onPressed: () {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+        //   );
+        // },
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        color: Theme.of(context).colorScheme.onSecondary,
       ),
     );
   }
@@ -212,7 +217,7 @@ class _ContactScreenState extends State<ContactScreen> {
           contentPadding: const EdgeInsets.all(15),
           hintText: 'Search Contacts',
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: Theme.of(context).colorScheme.background,
             fontSize: 14,
           ),
           prefixIcon: Padding(

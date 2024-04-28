@@ -22,12 +22,12 @@ class Message extends BaseModel{
     };
   }
 
-  static dynamic fromMap(Map<String, dynamic> map) {
-
+  static Message fromMap(Map<String, dynamic> map) {
     return Message.withId(
-      id: map['id'],
+      id: map['id'].toString(),
       timestamp: DateTime.parse(map['timestamp']),
       text: map['text'],
     );
   }
+  
 }

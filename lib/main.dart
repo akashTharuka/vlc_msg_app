@@ -8,9 +8,9 @@ Future<void> main() async {
 	WidgetsFlutterBinding.ensureInitialized();
 
 	sqfliteFfiInit();
-  // var databaseFactory = databaseFactoryFfi;
+  var databaseFactory = databaseFactoryFfi;
 
-	// final DatabaseHelper dbh = DatabaseHelper();
+	final DatabaseHelper dbh = DatabaseHelper();
 	final Future<Database> db = DatabaseHelper().db;
 	
 	runApp(MyApp(database: await db));
