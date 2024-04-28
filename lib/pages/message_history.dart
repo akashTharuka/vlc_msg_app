@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:vlc_msg_app/models/msg.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
 
 class MsgHistory extends StatefulWidget {
   const MsgHistory({Key? key}) : super(key: key);
@@ -9,39 +10,35 @@ class MsgHistory extends StatefulWidget {
 }
 
 class _MsgHistoryState extends State<MsgHistory> {
-  final List<Map<String, dynamic>> _allUsers = [
-    {"id": 1, "name": "Andy", "msg_type": "Sent"},
-    {"id": 2, "name": "Aragon", "msg_type": "Received"},
-    {"id": 3, "name": "Bob", "msg_type": "Sent"},
-    {"id": 4, "name": "Barbara", "msg_type": "Received"},
-    {"id": 5, "name": "Candy", "msg_type": "Sent"},
-    {"id": 6, "name": "Colin", "msg_type": "Sent"},
-    {"id": 7, "name": "Audra", "msg_type": "Received"},
-    {"id": 8, "name": "Banana", "msg_type": "Received"},
-    {"id": 9, "name": "Caversky", "msg_type": "Received"},
-    {"id": 10, "name": "Becky", "msg_type": "Sent"},
-  ];
+  final DatabaseHelper _databaseHelper =
+      DatabaseHelper(); // Create an instance of DatabaseHelper
 
-  // This list holds the data for the list view
   List<Map<String, dynamic>> _foundUsers = [];
+
   @override
-  initState() {
-    _foundUsers = _allUsers;
+  void initState() {
     super.initState();
+    _fetchMessages();
   }
 
-  // This function is called whenever the text field changes
-  void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
-    if (enteredKeyword.isEmpty) {
-      // if the search field is empty or only contains white-space, we'll display all users
-      results = _allUsers;
-    } else {
-      results = _allUsers
-          .where((user) =>
-              user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-      // we use the toLowerCase() method to make it case-insensitive
+  void _fetchMessages() async {
+    try {
+      List<Message> messages = await _databaseHelper.getMessages();
+
+      if (messages.isNotEmpty) {
+        setState(() {
+          _foundUsers = messages
+              .map((message) => {
+                    "id": message.id,
+                    "timestamp": message
+                        .timestamp, // Adjust these keys according to your Message model
+                    "text": message.text,
+                  })
+              .toList();
+        });
+      }
+    } catch (e) {
+      print('Failed to fetch messages: $e');
     }
   }
 
@@ -80,16 +77,6 @@ class _MsgHistoryState extends State<MsgHistory> {
                           color: Colors.white),
                     ),
                   ),
-                  // TextField(
-                  //   onChanged: (value) => _runFilter(value),
-                  //   decoration: const InputDecoration(
-                  //     labelText: 'Search',
-                  //     suffixIcon: Icon(Icons.search),
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
                   Expanded(
                     child: _foundUsers.isNotEmpty
                         ? ListView.builder(
@@ -107,23 +94,24 @@ class _MsgHistoryState extends State<MsgHistory> {
                                       color: Color.fromRGBO(0, 0, 0, 0.55)),
                                 ),
                                 trailing: IconButton(
-                                  icon: _foundUsers[index]["msg_type"] == "Sent"
-                                      ? Icon(Icons.delete)
-                                      : Icon(Icons
-                                          .delete), // Change icons based on msg_type
+                                  icon: Icon(Icons.delete), // Change icons based on text
                                   color: const Color.fromRGBO(49, 76, 79, 1),
                                   onPressed: () {
                                     setState(() {
-                                      _foundUsers.removeAt(index);
+                                      _databaseHelper.deleteMessageById(
+                                          _foundUsers[index]["id"]);
+                                      _fetchMessages();
                                     });
                                   },
                                 ),
                                 title: Text(
-                                  _foundUsers[index]['name'],
+                                  // _foundUsers[index]['timestamp'].toString(),
+                                  _foundUsers[index]["text"].toString(),
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(
-                                  '${_foundUsers[index]["msg_type"].toString()} message',
+                                  // '${_foundUsers[index]["text"].toString()} message',
+                                  _foundUsers[index]['timestamp'].toString(),
                                   style: TextStyle(
                                       color:
                                           const Color.fromRGBO(86, 154, 163, 1),
@@ -158,11 +146,14 @@ AppBar appBar(BuildContext context) {
     elevation: 0, // and here
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
+      // onPressed: () {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+      //   );
+      // },
       onPressed: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        Navigator.pop(context);
       },
       color: Theme.of(context).colorScheme.background,
     ),

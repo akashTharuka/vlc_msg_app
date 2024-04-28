@@ -7,7 +7,6 @@ import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/models/msg.dart';
 
 class DatabaseHelper {
-
   static final DatabaseHelper _instance = DatabaseHelper.internal();
 
   factory DatabaseHelper() => _instance;
@@ -22,37 +21,101 @@ class DatabaseHelper {
   DatabaseHelper.internal();
 
   Future<Database> init() async {
-
     try {
-
       String documentsDirectory = await getDatabasesPath();
       String path = join(documentsDirectory, "vlc.db");
-      
-      return openDatabase(
-        path, 
-        version: 1, 
-        onCreate: onCreate
-      );
-    } 
-		on Exception catch (e) {
 
-			log('Error: $e');
-			return Future.error(e);
+      return openDatabase(path, version: 1, onCreate: onCreate);
+    } on Exception catch (e) {
+      log('Error: $e');
+      return Future.error(e);
     }
   }
 
-  void onCreate(Database db, int version) async {
+  // void onCreate(Database db, int version) async {
 
-    await db.execute('CREATE TABLE user (name STRING NOT NULL, privateKey STRING NOT NULL, publicKey STRING NOT NULL, mobileUnlock BOOLEAN DEFAULT FALSE)');
-    await db.execute('CREATE TABLE contacts (id STRING PRIMARY KEY NOT NULL, name STRING NOT NULL, publicKey STRING NOT NULL)');
-    await db.execute('CREATE TABLE messages (id STRING PRIMARY KEY NOT NULL, timestamp TIMESTAMP NOT NULL, text TEXT NOT NULL)');
+  //   await db.execute('CREATE TABLE user (name STRING NOT NULL, privateKey STRING NOT NULL, publicKey STRING NOT NULL, mobileUnlock BOOLEAN DEFAULT FALSE)');
+  //   await db.execute('CREATE TABLE contacts (id STRING PRIMARY KEY NOT NULL, name STRING NOT NULL, publicKey STRING NOT NULL)');
+  //   await db.execute('CREATE TABLE messages (id STRING PRIMARY KEY NOT NULL, timestamp TIMESTAMP NOT NULL, text TEXT NOT NULL)');
+  // }
+
+  void onCreate(Database db, int version) async {
+    await db.execute(
+        'CREATE TABLE user (name STRING NOT NULL, privateKey STRING NOT NULL, publicKey STRING NOT NULL, mobileUnlock BOOLEAN DEFAULT FALSE)');
+    await db.execute(
+        'CREATE TABLE contacts (id STRING PRIMARY KEY NOT NULL, name STRING NOT NULL, publicKey STRING NOT NULL)');
+    await db.execute(
+        'CREATE TABLE messages (id STRING PRIMARY KEY NOT NULL, timestamp TIMESTAMP NOT NULL, text TEXT NOT NULL)');
+
+    // Add dummy data to contacts
+    var dummyContacts = [
+      {'id': '1', 'name': 'John Doe', 'publicKey': 'key1'},
+      {'id': '2', 'name': 'Jane Doe', 'publicKey': 'key2'},
+      {'id': '3', 'name': 'Alice', 'publicKey': 'key3'},
+      {'id': '4', 'name': 'Bob', 'publicKey': 'key4'},
+      {'id': '5', 'name': 'Charlie', 'publicKey': 'key5'},
+      {'id': '6', 'name': 'David', 'publicKey': 'key6'},
+      {'id': '7', 'name': 'Eve', 'publicKey': 'key7'},
+      {'id': '8', 'name': 'Frank', 'publicKey': 'key8'},
+      {'id': '9', 'name': 'Grace', 'publicKey': 'key9'},
+      {'id': '10', 'name': 'Heidi', 'publicKey': 'key10'},
+    ];
+    for (var contact in dummyContacts) {
+      await db.insert('contacts', contact);
+    }
+
+    var dummyMessages = [
+      {'id': '1', 'timestamp': DateTime.now().toString(), 'text': 'Dummy message 1'},
+      {'id': '2', 'timestamp': DateTime.now().toString(), 'text': 'Dummy message 2'},
+      {
+        'id': '3',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 3'
+      },
+      {
+        'id': '4',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 4'
+      },
+      {
+        'id': '5',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 5'
+      },
+      {
+        'id': '6',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 6'
+      },
+      {
+        'id': '7',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 7'
+      },
+      {
+        'id': '8',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 8'
+      },
+      {
+        'id': '9',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 9'
+      },
+      {
+        'id': '10',
+        'timestamp': DateTime.now().toString(),
+        'text': 'Dummy message 10'
+      },
+    ];
+    for (var message in dummyMessages) {
+      await db.insert('messages', message);
+    }
   }
 
   // Drop all tables and recreate them
   Future<void> resetDatabase() async {
-
     try {
-
       Database db = await this.db;
 
       await db.transaction((txn) async {
@@ -61,9 +124,7 @@ class DatabaseHelper {
         await txn.execute('DROP TABLE IF EXISTS messages');
         onCreate(db, 1);
       });
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error resetting database: $e');
       throw Exception('Failed to reset database');
     }
@@ -71,7 +132,6 @@ class DatabaseHelper {
 
   // Get all table names
   void getTableNames() async {
-
     try {
       Database db = await this.db;
       List<Map<String, dynamic>> tables = await db.rawQuery(
@@ -91,15 +151,11 @@ class DatabaseHelper {
 
   // Save User
   Future<int> saveUser(User user) async {
-
     try {
-
       Database db = await this.db;
       int result = await db.insert('user', user.toMap());
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error saving user: $e');
       throw Exception('Failed to save user');
     }
@@ -107,15 +163,11 @@ class DatabaseHelper {
 
   // Update User
   Future<int> updateUser(User user) async {
-
     try {
-
       Database db = await this.db;
       int result = await db.update('user', user.toMap());
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error updating user: $e');
       throw Exception('Failed to update user');
     }
@@ -123,9 +175,7 @@ class DatabaseHelper {
 
   // Get User
   Future<User> getUser() async {
-
     try {
-
       Database db = await this.db;
       List<Map<String, dynamic>> users = await db.query('user');
 
@@ -138,9 +188,7 @@ class DatabaseHelper {
 
       log('No exsisting User found');
       throw Exception('No exsisting User found');
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error getting user: $e');
       throw Exception('Failed to get user');
     }
@@ -148,16 +196,12 @@ class DatabaseHelper {
 
   // Empty the User table
   Future<int> emptyUser() async {
-
     try {
-
       Database db = await this.db;
       int result = await db.delete('user');
       log('User table emptied');
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error emptying user: $e');
       throw Exception('Failed to empty user');
     }
@@ -167,11 +211,10 @@ class DatabaseHelper {
 
   // Save Contact
   Future<int> saveContact(Contact contact) async {
-
     try {
-
       Database db = await this.db;
-      List<Map<String, dynamic>> existingContacts = await db.query('contacts', where: 'publicKey = ?', whereArgs: [contact.publicKey]);
+      List<Map<String, dynamic>> existingContacts = await db.query('contacts',
+          where: 'publicKey = ?', whereArgs: [contact.publicKey]);
 
       if (existingContacts.isNotEmpty) {
         throw Exception('Contact with public key already exists');
@@ -179,9 +222,7 @@ class DatabaseHelper {
 
       int result = await db.insert('contacts', contact.toMap());
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error saving contact: $e');
       throw Exception('Failed to save contact');
     }
@@ -189,21 +230,18 @@ class DatabaseHelper {
 
   // Get Contacts
   Future<List<Contact>> getContacts() async {
-
     try {
-
       Database db = await this.db;
       List<Map<String, dynamic>> contacts = await db.query('contacts');
 
       if (contacts.isNotEmpty) {
-        return contacts.map((contact) => Contact.fromMap(contact)).toList() as List<Contact>;
+        return contacts.map((contact) => Contact.fromMap(contact)).toList()
+            as List<Contact>;
       }
 
       log('No exsisting Contacts found');
       throw Exception('No exsisting Contacts found');
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error getting contacts: $e');
       throw Exception('Failed to get contacts');
     }
@@ -211,11 +249,10 @@ class DatabaseHelper {
 
   // Get Contact by id
   Future<Contact> getContactById(String id) async {
-
     try {
-
       Database db = await this.db;
-      List<Map<String, dynamic>> contacts = await db.query('contacts', where: 'id = ?', whereArgs: [id]);
+      List<Map<String, dynamic>> contacts =
+          await db.query('contacts', where: 'id = ?', whereArgs: [id]);
 
       if (contacts.isNotEmpty) {
         return Contact.fromMap(contacts.first);
@@ -223,9 +260,7 @@ class DatabaseHelper {
 
       log('No exsisting Contact found');
       throw Exception('No exsisting Contact found');
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error getting contact: $e');
       throw Exception('Failed to get contact');
     }
@@ -233,15 +268,12 @@ class DatabaseHelper {
 
   // Delete Contact by id
   Future<int> deleteContactById(String id) async {
-
     try {
-
       Database db = await this.db;
-      int result = await db.delete('contacts', where: 'id = ?', whereArgs: [id]);
+      int result =
+          await db.delete('contacts', where: 'id = ?', whereArgs: [id]);
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error deleting contact: $e');
       throw Exception('Failed to delete contact');
     }
@@ -251,15 +283,11 @@ class DatabaseHelper {
 
   // Save Message
   Future<int> saveMessage(Message msg) async {
-
     try {
-
       Database db = await this.db;
       int result = await db.insert('messages', msg.toMap());
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error saving message: $e');
       throw Exception('Failed to save message');
     }
@@ -267,37 +295,44 @@ class DatabaseHelper {
 
   // Get Messages
   Future<List<Message>> getMessages() async {
-
     try {
-
       Database db = await this.db;
       List<Map<String, dynamic>> messages = await db.query('messages');
 
       if (messages.isNotEmpty) {
-        return messages.map((message) => Message.fromMap(message)).toList() as List<Message>;
+        return messages.map((message) => Message.fromMap(message)).toList();
       }
 
       log('No exsisting Messages found');
       throw Exception('No exsisting Messages found');
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error getting messages: $e');
       throw Exception('Failed to get messages');
     }
   }
 
+  // Future<List<Message>> getMessages() async {
+  //   try {
+  //     Database db = await this.db;
+  //     List<Map<String, dynamic>> messageMaps = await db.query('messages');
+
+  //     return messageMaps
+  //         .map<Message>((messageMap) => Message.fromMap(messageMap))
+  //         .toList();
+  //   } catch (e) {
+  //     print('Error getting messages: $e');
+  //     throw Exception('Failed to get messages');
+  //   }
+  // }
+
   // Delete Message by id
   Future<int> deleteMessageById(String id) async {
-
     try {
-
       Database db = await this.db;
-      int result = await db.delete('messages', where: 'id = ?', whereArgs: [id]);
+      int result =
+          await db.delete('messages', where: 'id = ?', whereArgs: [id]);
       return result;
-    } 
-    catch (e) {
-
+    } catch (e) {
       log('Error deleting message: $e');
       throw Exception('Failed to delete message');
     }
