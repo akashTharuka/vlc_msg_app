@@ -136,8 +136,8 @@ class DatabaseHelper {
         return User.fromMap(users.first);
       }
 
-      log('No exsisting User found');
-      throw Exception('No exsisting User found');
+      log('No existing User found');
+      throw Exception('No existing User found');
     } 
     catch (e) {
 
