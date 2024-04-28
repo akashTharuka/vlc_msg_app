@@ -201,11 +201,11 @@ class DatabaseHelper {
       List<Map<String, dynamic>> contacts = await db.query('contacts');
 
       if (contacts.isNotEmpty) {
-        return contacts.map((contact) => Contact.fromMap(contact)).toList() as List<Contact>;
+        return contacts.map((contact) => Contact.fromMap(contact)).toList();
       }
 
-      log('No exsisting Contacts found');
-      throw Exception('No exsisting Contacts found');
+      log('No Existing Contacts Found');
+      throw Exception('No Existing Contacts Found');
     } 
     catch (e) {
 

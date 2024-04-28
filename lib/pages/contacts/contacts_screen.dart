@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
-import 'package:vlc_msg_app/pages/contacts/contacts.dart';
-import 'package:vlc_msg_app/pages/contacts/contacts_info.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -18,41 +18,52 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-  final _contacts = Contacts().getContacts();
-  List<ContactsInfo> _filteredContacts = [];
-
-  String _qrResult = "Not Yet Scanned";
+  List<Contact> _filteredContacts = [];
+  List<Contact> _contacts = [];
   String error = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _getContacts();
+  }
+
+  Future<void> _getContacts() async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      _contacts = await dbHelper.getContacts();
+      setState(() {
+        _filteredContacts = _contacts;
+      });
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+  }
 
   Future<void> _scanQRCode() async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+      
       if (!mounted) return;
+
+      Map<String, dynamic> contact = jsonDecode(qrCode);
+      Contact newContact = Contact(
+        name: contact['name'], 
+        publicKey: contact['publicKey']
+      );
+      final DatabaseHelper dbHelper = DatabaseHelper();
+      await dbHelper.saveContact(newContact);
+      await _getContacts();
+    } on Exception catch (e) {
       setState(() {
-        _qrResult = qrCode.toString();
+        error = e.toString();
       });
-
-      try {
-        Map<String, dynamic> contact = jsonDecode(_qrResult);
-        Contact newContact = Contact(
-          name: contact['name'], 
-          publicKey: contact['publicKey']
-        );
-        final DatabaseHelper dbHelper = DatabaseHelper();
-        dbHelper.saveContact(newContact);
-      } on Exception catch (e) {
-        setState(() {
-          error = e.toString();
-        });
-      }
-
-    } on PlatformException {
-      _qrResult = 'Failed to read QR code.';
+      print(error);
     }
   }
 
   void _searchContacts(String query) {
-    List<ContactsInfo> searchedContacts = [];
+    List<Contact> searchedContacts = [];
     if (query.isEmpty) {
       searchedContacts = _contacts;
     }
@@ -63,12 +74,6 @@ class _ContactScreenState extends State<ContactScreen> {
     setState(() {
       _filteredContacts = searchedContacts;
     });
-  }
-
-  @override
-  void initState() {
-    _filteredContacts = _contacts;
-    super.initState();
   }
 
   @override
@@ -105,7 +110,7 @@ class _ContactScreenState extends State<ContactScreen> {
                     return contactCard(index, context);
                   },
                 ),
-              ),
+              )
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -120,7 +125,7 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Card contactCard(int index, BuildContext context) {
     return Card(
-      key: ValueKey(_filteredContacts[index].publicKey),
+      key: ValueKey(_filteredContacts[index].id),
       color: Theme.of(context).colorScheme.background.withOpacity(0.8),
       elevation: 4,
       child: ListTile(

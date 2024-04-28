@@ -22,7 +22,7 @@ class Contact extends BaseModel {
     };
   }
 
-  static dynamic fromMap(Map<String, dynamic> map) {
+  static Contact fromMap(Map<String, dynamic> map) {
 
     return Contact.withId(
       id: map['id'],

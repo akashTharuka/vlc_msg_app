@@ -17,7 +17,7 @@ class _QRScreenState extends State<QRScreen> {
 
   final DatabaseHelper dbHelper = DatabaseHelper();
 
-  String qrData = 'public key here';
+  String qrData = 'Not yet scanned';
   String error = '';
 
   @override
@@ -29,7 +29,9 @@ class _QRScreenState extends State<QRScreen> {
   Future<void> _initUser() async {
     try {
       User user = await dbHelper.getUser();
-      qrData = jsonEncode(user.toMap());
+      setState(() {
+        qrData = jsonEncode(user.toMap());
+      });
     } catch (e) {
       error = e.toString();
       Navigator.pushReplacement(
