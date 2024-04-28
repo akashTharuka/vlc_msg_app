@@ -1,11 +1,43 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
-class QRScreen extends StatelessWidget {
+class QRScreen extends StatefulWidget {
   const QRScreen({super.key});
 
-  final qrData = 'public key here';
+  @override
+  State<QRScreen> createState() => _QRScreenState();
+}
+
+class _QRScreenState extends State<QRScreen> {
+
+  final DatabaseHelper dbHelper = DatabaseHelper();
+
+  String qrData = 'public key here';
+  String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initUser();
+  }
+
+  Future<void> _initUser() async {
+    try {
+      User user = await dbHelper.getUser();
+      qrData = jsonEncode(user.toMap());
+    } catch (e) {
+      error = e.toString();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
