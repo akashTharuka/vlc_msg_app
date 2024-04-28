@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/receive_message.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
@@ -7,8 +9,37 @@ import 'package:vlc_msg_app/pages/qr_screen.dart';
 import 'package:vlc_msg_app/pages/send_msg_screen.dart';
 import 'package:vlc_msg_app/pages/settings.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  String currentUserName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      User user = await dbHelper.getUser();
+      setState(() {
+        currentUserName = user.name;
+      });
+    } catch (e) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 15.0), // specify the top margin
                   child: Text(
-                    'Hello Lasith!',
+                    'Hello ${currentUserName ?? 'Guest'}!',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -59,7 +90,6 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     qrGenerator(context),
-                    logout(context)
                   ],
                 ),
               ],

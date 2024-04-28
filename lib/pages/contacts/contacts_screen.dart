@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
-  const ContactScreen({Key? key}) : super(key: key);
+  const ContactScreen({super.key});
 
   @override
   State<ContactScreen> createState() => _ContactScreenState();
@@ -58,7 +55,6 @@ class _ContactScreenState extends State<ContactScreen> {
       setState(() {
         error = e.toString();
       });
-      print(error);
     }
   }
 

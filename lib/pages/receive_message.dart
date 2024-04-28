@@ -1,6 +1,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ReceiveMessagePage extends StatefulWidget {
   @override
@@ -20,7 +19,7 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
   Widget build(BuildContext context) {
     return Stack(children: [
       Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.jpg'),
             fit: BoxFit.cover,
@@ -40,21 +39,11 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
                     height: 80,
                     child: Image.asset('assets/images/BareLogo.png'),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5.0), // specify the top margin
-                    child: Text(
-                      'Receive Message',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   // Camera Preview
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height *
                         0.52, // adjust this to fit your needs
                     width: MediaQuery.of(context).size.width *
@@ -63,19 +52,19 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
                       camera: snapshot.data!.first,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 7,
                   ),
                   // Text Field
                   Container(
                     height: MediaQuery.of(context).size.height * 0.15,
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                         top: 15, bottom: 20, left: 20, right: 20),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(227, 255, 255, 255),
+                      color: const Color.fromARGB(227, 255, 255, 255),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    child: Material(
+                    child: const Material(
                       type: MaterialType.transparency,
                       child: TextField(
                         style: TextStyle(fontSize: 15.0),
@@ -85,7 +74,7 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
                           hintStyle: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.normal,
-                              color: const Color.fromARGB(222, 158, 158, 158)),
+                              color: Color.fromARGB(222, 158, 158, 158)),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.all(10.0),
                         ),
@@ -96,7 +85,7 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
               ),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -109,9 +98,9 @@ class CameraPreviewWidget extends StatefulWidget {
   final CameraDescription camera;
 
   const CameraPreviewWidget({
-    Key? key,
+    super.key,
     required this.camera,
-  }) : super(key: key);
+  });
 
   @override
   _CameraPreviewWidgetState createState() => _CameraPreviewWidgetState();
@@ -157,6 +146,10 @@ AppBar appBar(BuildContext context) {
   return AppBar(
     backgroundColor: Colors.transparent, // here too
     elevation: 0, // and here
+    title: Text(
+      'Receive Message',
+      style: Theme.of(context).textTheme.titleMedium,
+    ),
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
       // onPressed: () {

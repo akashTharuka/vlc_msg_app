@@ -196,7 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         _saveUser(user);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       } on Exception catch (e) {
                         setState(() {

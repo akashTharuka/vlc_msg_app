@@ -36,7 +36,7 @@ class _QRScreenState extends State<QRScreen> {
       error = e.toString();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     }
   }
@@ -73,25 +73,20 @@ class _QRScreenState extends State<QRScreen> {
     return AppBar(
       backgroundColor: Colors.transparent, // here too
       elevation: 0, // and here
+      title: Text(
+        'Add Contact',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
       leading: IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           },
           color: Theme.of(context).colorScheme.background,
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-            // TODO: Navigate to settings screen
-          },
-          color: Theme.of(context).colorScheme.background,
-        ),
-      ],
     );
   }
 }
