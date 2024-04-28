@@ -1,15 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-// import 'package:vlc_msg_app/pages/StartUp.dart';
-// import 'package:vlc_msg_app/pages/SendMessage.dart';
-import 'package:vlc_msg_app/pages/ReceiveMessage.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
+import 'package:vlc_msg_app/pages/receive_message.dart';
 import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/pages/onboarding_screen.dart';
+import 'package:vlc_msg_app/pages/qr_screen.dart';
 import 'package:vlc_msg_app/pages/send_msg_screen.dart';
+import 'package:vlc_msg_app/pages/settings.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  String currentUserName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      User user = await dbHelper.getUser();
+      setState(() {
+        currentUserName = user.name;
+      });
+    } catch (e) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +59,7 @@ class HomeScreen extends StatelessWidget {
         Scaffold(
           backgroundColor:
               Colors.transparent, // it's important to make it transparent
-          appBar: AppBar(
-            backgroundColor: Colors.transparent, // here too
-            elevation: 0, // and here
-            actions: [
-              IconButton(
-                icon: Image.asset('assets/icons/settings.png'),
-                onPressed: () {
-                  // TODO: Navigate to settings screen
-                },
-              ),
-            ],
-          ),
+          appBar: appBar(context),
           body: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.only(top: 0, bottom: 32, left: 20, right: 20),
@@ -54,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 15.0), // specify the top margin
                   child: Text(
-                    'Hello Lasith!',
+                    'Hello ${currentUserName ?? 'Guest'}!',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -70,8 +89,7 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    qrScanner(context),
-                    logout(context)
+                    qrGenerator(context),
                   ],
                 ),
               ],
@@ -90,7 +108,7 @@ class HomeScreen extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () {
-            // TODO: Navigate to settings screen
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
           },
           color: Theme.of(context).colorScheme.background,
         ),
@@ -104,7 +122,7 @@ class HomeScreen extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
-              Colors.white.withOpacity(0.8)),
+              Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(
               Colors.black.withOpacity(0.55)),
           shape:
@@ -126,7 +144,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  SizedBox qrScanner(context) {
+  SizedBox qrGenerator(context) {
     return SizedBox(
       width: 50.0,
       height: 50.0,
@@ -134,7 +152,11 @@ class HomeScreen extends StatelessWidget {
         icon: const Icon(Icons.qr_code),
         color: Theme.of(context).colorScheme.background,
         onPressed: () {
-          // TODO: Add view QR code functionality
+          // navigate to the screen with the QR image
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const QRScreen()),
+          );
         },
       ),
     );
@@ -147,7 +169,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 25),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -173,7 +195,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -199,7 +221,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)),
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)),
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -225,7 +247,7 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15, top: 18),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.8)), // set opacity here
+          backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.9)), // set opacity here
           foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.55)),
           shape:MaterialStateProperty.all(
             RoundedRectangleBorder(

@@ -30,7 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: ^0.9.4+5
   quickalert:
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,10 +44,14 @@ dependencies:
   uuid: ^4.3.3
   path: ^1.9.0
   sqflite_common_ffi: ^2.3.3
+  qr_flutter: ^4.1.0
+  flutter_barcode_scanner: ^2.0.0
   pointycastle: ^3.8.0
   fast_rsa: ^3.6.1
   torch_light: ^1.0.0
   camera: ^0.10.5+9
+  dropdown_search: ^5.0.6
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:

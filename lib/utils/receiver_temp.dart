@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/utils/transmitter.dart';
 
 class ReceiveMessagePage extends StatefulWidget {
   @override
@@ -126,37 +127,129 @@ class CameraPreviewWidget extends StatefulWidget {
 }
 
 class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
-  late CameraController _controller;
+
+  late CameraController _cameraController;
+  bool _isReceiving = false;
+  String _receivedBinary = "";
+  bool _transmissionActive = false;
 
   @override
-  void initState() {
+  void initState() async {
+
     super.initState();
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.medium,
+
+    final cameras = await availableCameras();
+    final camera = cameras.first; // Use the first camera
+
+    _cameraController = CameraController(
+      camera,
+      ResolutionPreset.low,
+      enableAudio: false, // No need for audio
     );
-    _controller.initialize().then((_) {
+
+    _cameraController.initialize().then((_) {
+
       if (!mounted) {
         return;
       }
+
+      _cameraController.startImageStream((CameraImage image) {
+
+        _startReceiving();
+      });
+
       setState(() {});
     });
   }
 
+  void _startReceiving() {
+
+    if (_isReceiving) return;
+
+    setState(() {
+      _isReceiving = true;
+      _receivedBinary = "";
+      _transmissionActive = false; // Initially, the transmission isn't active
+    });
+
+    _cameraController.startImageStream((image) async {
+
+      final brightness = _calculateAverageBrightness(image);
+
+      final lightOnThreshold = 150; // Adjust based on environmental conditions
+
+      if (brightness > lightOnThreshold) {
+
+        if (!_transmissionActive) {
+
+          // If the transmission is not active, check for the start signal
+          _receivedBinary += '1';
+
+          if (_receivedBinary.endsWith(Transmitter.startString)) {
+
+            _transmissionActive = true; // Transmission starts
+            _receivedBinary = ""; // Clear the buffer
+          }
+        } 
+        else {
+          _receivedBinary += '1'; // Light is on
+        }
+      } 
+      else {
+
+        _receivedBinary += '0'; // Light is off
+
+        if (_transmissionActive && _receivedBinary.endsWith(Transmitter.endString)) {
+
+          _stopReceiving(); // If we detect the end signal, stop receiving
+          return;
+        }
+      }
+    });
+  }
+
+  void _stopReceiving() {
+
+    if (!_isReceiving) return;
+
+    _cameraController.stopImageStream();
+
+    setState(() {
+      _isReceiving = false;
+      _transmissionActive = false;
+    });
+
+    // Remove start and end strings, if present
+    var receivedBinaryWithoutMarkers = _receivedBinary.replaceAll(Transmitter.startString, '');
+    receivedBinaryWithoutMarkers = receivedBinaryWithoutMarkers.replaceAll(Transmitter.endString, '');
+
+    print("Received binary: $_receivedBinary");
+  }
+
+  double _calculateAverageBrightness(CameraImage image) {
+
+    // Calculate the average brightness in the frame
+    final pixelData = image.planes[0].bytes;
+    final pixelSum = pixelData.reduce((a, b) => a + b);
+    return pixelSum / pixelData.length;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!_controller.value.isInitialized) {
+
+    if (!_cameraController.value.isInitialized) {
       return Container();
     }
+    
     return AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
-      child: CameraPreview(_controller),
+      aspectRatio: _cameraController.value.aspectRatio,
+      child: CameraPreview(_cameraController),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _cameraController.dispose();
     super.dispose();
   }
 }
