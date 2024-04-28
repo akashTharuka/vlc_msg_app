@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key});
@@ -20,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      
       children: <Widget>[
         // The Container with the background image
         Container(
@@ -35,10 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Scaffold(
           backgroundColor:
               Colors.transparent, // it's important to make it transparent
-          appBar: AppBar(
-            backgroundColor: Colors.transparent, // here too
-            elevation: 0, // and here
-          ),
+          appBar: appBar(context),
           body: Container(
             alignment: Alignment.center,
             padding:
@@ -62,21 +61,48 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   SizedBox(height: 80),
                   Container(
-                    child: TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Account Name',
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(230, 239, 239,
-                              239), // Change this to your desired color
-                        ),
-                        hintText: _nameController.text.isEmpty
-                            ? 'Enter account name'
-                            : _nameController.text,
+                    alignment: Alignment.centerLeft, // Add this
+                    child: Text(
+                      "Change your account name",
+                      style: TextStyle(
+                        color: Color.fromARGB(230, 239, 239,
+                            239), // Change this to your desired color
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      child: TextField(
+                        controller: _nameController,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 14, // Change this to your desired font size
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(15),
+                          hintText: _nameController.text.isEmpty
+                              ? 'Enter account name'
+                              : _nameController.text,
+                          hintStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                            fontSize: 14,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          // fillColor: Theme.of(context).colorScheme.onSurface, // This will change the text field color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
                   Row(
                     children: <Widget>[
                       Text(
@@ -96,7 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 200),
+                  SizedBox(height: 180),
                   Align(
                     alignment: Alignment.topRight,
                     child: Container(
@@ -137,3 +163,21 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
+
+
+AppBar appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent, // here too
+      elevation: 0, // and here
+      leading: IconButton(
+          icon: const Icon(Icons.keyboard_arrow_left),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+          color: Theme.of(context).colorScheme.background,
+      ),
+    );
+  }

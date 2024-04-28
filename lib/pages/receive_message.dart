@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ReceiveMessagePage extends StatefulWidget {
   @override
@@ -17,15 +18,16 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background.jpg'),
-            fit: BoxFit.cover,
+    return Stack(children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-        child: FutureBuilder<List<CameraDescription>>(
+        FutureBuilder<List<CameraDescription>>(
           future: _camerasFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
@@ -33,27 +35,24 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 50,
-                    ),
-                    // App Logo and Welcome Text
+                    appBar(context),
                     SizedBox(
                       height: 80,
                       child: Image.asset('assets/images/BareLogo.png'),
                     ),
                     Container(
                       margin:
-                          EdgeInsets.only(top: 15.0), // specify the top margin
+                          EdgeInsets.only(top: 5.0), // specify the top margin
                       child: Text(
                         'Receive Message',
                         style: TextStyle(
-                            fontSize: 17,
+                            fontSize: 14,
                             fontWeight: FontWeight.normal,
                             color: Colors.white),
                       ),
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     ),
                     // Camera Preview
                     Container(
@@ -66,40 +65,35 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     // Text Field
                     Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    margin: EdgeInsets.only(
-                        top: 15, bottom: 20,left: 20, right: 20), // Adjust margins as needed
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(227, 255, 255,
-                          255), // Background color of the text box
-                      borderRadius: BorderRadius.circular(
-                          10.0), // Border radius of the text box
-                    ),
-                    child: TextField(
-                      style: TextStyle(
-                        fontSize: 15.0
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      margin: EdgeInsets.only(
+                          top: 15, bottom: 20, left: 20, right: 20),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(227, 255, 255, 255),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      maxLines:
-                          null, // Set the number of lines for the text box
-                      decoration: InputDecoration(
-                        hintText:
-                            'View your message here...', // Placeholder text
-                        hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.normal,
-                            color:
-                                const Color.fromARGB(222, 158, 158, 158)), // Style for the placeholder text
-                        border: InputBorder
-                            .none, // Remove the default underline border
-                        contentPadding:
-                            EdgeInsets.all(10.0), // Padding inside the text box
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: TextField(
+                          style: TextStyle(fontSize: 15.0),
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: 'View your message here...',
+                            hintStyle: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.normal,
+                                color:
+                                    const Color.fromARGB(222, 158, 158, 158)),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(10.0),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
                   ],
                 ),
               );
@@ -108,8 +102,8 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
             }
           },
         ),
-      ),
-    );
+      ]);
+    // );
   }
 }
 
@@ -159,4 +153,21 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     _controller.dispose();
     super.dispose();
   }
+}
+
+AppBar appBar(BuildContext context) {
+  return AppBar(
+    backgroundColor: Colors.transparent, // here too
+    elevation: 0, // and here
+    leading: IconButton(
+      icon: const Icon(Icons.keyboard_arrow_left),
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      },
+      color: Theme.of(context).colorScheme.background,
+    ),
+  );
 }

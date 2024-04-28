@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class MsgHistory extends StatefulWidget {
   const MsgHistory({Key? key}) : super(key: key);
@@ -46,23 +47,25 @@ class _MsgHistoryState extends State<MsgHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background.jpg'),
-            fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: appBar(context),
+          body: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  SizedBox(
                     height: 80,
                     child: Image.asset('assets/images/BareLogo.png'),
                   ),
@@ -77,64 +80,91 @@ class _MsgHistoryState extends State<MsgHistory> {
                           color: Colors.white),
                     ),
                   ),
-              // TextField(
-              //   onChanged: (value) => _runFilter(value),
-              //   decoration: const InputDecoration(
-              //     labelText: 'Search',
-              //     suffixIcon: Icon(Icons.search),
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 20,
-              // ),
-              Expanded(
-                child: _foundUsers.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _foundUsers.length,
-                        itemBuilder: (context, index) => Card(
-                          key: ValueKey(_foundUsers[index]["id"]),
-                          color: Colors.white,
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            leading: Text(
-                              _foundUsers[index]["id"].toString(),
-                              style: const TextStyle(
-                                  fontSize: 24, color: Color.fromRGBO(0, 0, 0, 0.55)),
+                  // TextField(
+                  //   onChanged: (value) => _runFilter(value),
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Search',
+                  //     suffixIcon: Icon(Icons.search),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  Expanded(
+                    child: _foundUsers.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: _foundUsers.length,
+                            itemBuilder: (context, index) => Card(
+                              key: ValueKey(_foundUsers[index]["id"]),
+                              color: Colors.white,
+                              elevation: 4,
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              child: ListTile(
+                                leading: Text(
+                                  _foundUsers[index]["id"].toString(),
+                                  style: const TextStyle(
+                                      fontSize: 24,
+                                      color: Color.fromRGBO(0, 0, 0, 0.55)),
+                                ),
+                                trailing: IconButton(
+                                  icon: _foundUsers[index]["msg_type"] == "Sent"
+                                      ? Icon(Icons.delete)
+                                      : Icon(Icons
+                                          .delete), // Change icons based on msg_type
+                                  color: const Color.fromRGBO(49, 76, 79, 1),
+                                  onPressed: () {
+                                    setState(() {
+                                      _foundUsers.removeAt(index);
+                                    });
+                                  },
+                                ),
+                                title: Text(
+                                  _foundUsers[index]['name'],
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                subtitle: Text(
+                                  '${_foundUsers[index]["msg_type"].toString()} message',
+                                  style: TextStyle(
+                                      color:
+                                          const Color.fromRGBO(86, 154, 163, 1),
+                                      fontSize: 13),
+                                ),
+                              ),
                             ),
-                            trailing: IconButton(
-  icon: _foundUsers[index]["msg_type"] == "Sent"
-      ? Icon(Icons.outgoing_mail)
-      : Icon(Icons.mark_email_read), // Change icons based on msg_type
-  color: const Color.fromRGBO(49, 76, 79, 1),
-  onPressed: () {
-    setState(() {
-      _foundUsers.removeAt(index);
-    });
-  },
-),
-                            title: Text(
-                              _foundUsers[index]['name'],
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            subtitle: Text(
-                              '${_foundUsers[index]["msg_type"].toString()} message',
-                              style: TextStyle(color: const Color.fromRGBO(86, 154, 163,
-                                  1),
-                                  fontSize: 13),
+                          )
+                        : Container(
+                            height: double.infinity,
+                            child: Center(
+                              child: const Text(
+                                'No results found',
+                                style: TextStyle(fontSize: 17),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    : const Text(
-                        'No results found',
-                        style: TextStyle(fontSize: 24),
-                      ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        )
+      ],
     );
   }
+}
+
+AppBar appBar(BuildContext context) {
+  return AppBar(
+    backgroundColor: Colors.transparent, // here too
+    elevation: 0, // and here
+    leading: IconButton(
+      icon: const Icon(Icons.keyboard_arrow_left),
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      },
+      color: Theme.of(context).colorScheme.background,
+    ),
+  );
 }

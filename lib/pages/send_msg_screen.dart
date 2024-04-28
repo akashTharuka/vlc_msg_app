@@ -205,15 +205,15 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
           },
           color: Theme.of(context).colorScheme.background,
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-            // TODO: Navigate to settings screen
-          },
-          color: Theme.of(context).colorScheme.background,
-        ),
-      ],
+      // actions: [
+      //   IconButton(
+      //     icon: const Icon(Icons.settings),
+      //     onPressed: () {
+      //       // TODO: Navigate to settings screen
+      //     },
+      //     color: Theme.of(context).colorScheme.background,
+      //   ),
+      // ],
     );
   }
 }

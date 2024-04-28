@@ -91,7 +91,7 @@ class _ContactScreenState extends State<ContactScreen> {
                       key: ValueKey(_filteredContacts[index].publicKey),
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: Theme.of(context).colorScheme.background,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
@@ -112,7 +112,7 @@ class _ContactScreenState extends State<ContactScreen> {
                             width: 50,
                             margin: const EdgeInsets.only(left: 20, right: 20),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.onSecondary,
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -123,7 +123,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                     .titleSmall!
                                     .copyWith(
                                       fontWeight: FontWeight.w700,
-                                      color: Theme.of(context).colorScheme.onSecondary,
+                                      color: Theme.of(context).colorScheme.background,
                                     ),
                               ),
                             ),
@@ -142,7 +142,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                         .titleSmall!
                                         .copyWith(
                                           fontWeight: FontWeight.w700,
-                                          color: Theme.of(context).colorScheme.background,
+                                          color: Theme.of(context).colorScheme.onSecondary,
                                         ),
                                   ),
                                   const SizedBox(height: 5),
@@ -184,7 +184,7 @@ class _ContactScreenState extends State<ContactScreen> {
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           },
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.onSecondary,
       ),
       actions: [
         IconButton(
@@ -192,7 +192,7 @@ class _ContactScreenState extends State<ContactScreen> {
           onPressed: () {
             // TODO: Navigate to settings screen
           },
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.onSecondary,
         ),
       ],
     );
@@ -224,7 +224,7 @@ class _ContactScreenState extends State<ContactScreen> {
           contentPadding: const EdgeInsets.all(15),
           hintText: 'Search Contacts',
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: Theme.of(context).colorScheme.background,
             fontSize: 14,
           ),
           prefixIcon: Padding(
