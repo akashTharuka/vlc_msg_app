@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:toastification/toastification.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:vlc_msg_app/utils/confirmation_dialog.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
@@ -30,6 +31,7 @@ class _ContactScreenState extends State<ContactScreen> {
     try {
       _contacts = await dbHelper.getContacts();
       setState(() {
+        _contacts = _contacts;
         _filteredContacts = _contacts;
       });
     } on Exception catch (e) {
@@ -37,11 +39,51 @@ class _ContactScreenState extends State<ContactScreen> {
     }
   }
 
+  Future<void> _deleteContact(String id) async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      int result = await dbHelper.deleteContactById(id);
+      await _getContacts();
+      if (result != 0) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Success'),
+          description: RichText(text: const TextSpan(text: 'Contact deleted successfully')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      } else {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Failed'),
+          description: RichText(text: const TextSpan(text: 'Failed to delete the contact, Try Again!!!')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      }
+    } on Exception catch (e) {
+      setState(() {
+        error = e.toString();
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Failed'),
+          description: RichText(text: TextSpan(text: error)),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      });
+    }
+    return;
+  }
+
   Future<void> _scanQRCode() async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
       
-      if (!mounted) return;
+      if (!mounted || qrCode == '-1') return;
 
       Map<String, dynamic> contact = jsonDecode(qrCode);
       Contact newContact = Contact(
@@ -49,11 +91,38 @@ class _ContactScreenState extends State<ContactScreen> {
         publicKey: contact['publicKey']
       );
       final DatabaseHelper dbHelper = DatabaseHelper();
-      await dbHelper.saveContact(newContact);
+      int result = await dbHelper.saveContact(newContact);
+      if (result != 0) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Success'),
+          description: RichText(text: const TextSpan(text: 'Contact added successfully')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      } else {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Failed'),
+          description: RichText(text: const TextSpan(text: 'Failed to add the contact, Try Again!!!')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      }
       await _getContacts();
     } on Exception catch (e) {
       setState(() {
         error = e.toString();
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Failed'),
+          description: RichText(text: TextSpan(text: error)),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
       });
     }
   }
@@ -72,6 +141,22 @@ class _ContactScreenState extends State<ContactScreen> {
     setState(() {
       _filteredContacts = searchedContacts;
     });
+  }
+
+  Future<void> _showConfirmationDialog(BuildContext context, String id) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          title: 'This will delete this contact from your list permenantly!',
+          content: 'Are you sure you want to proceed?',
+          onConfirm: () => _deleteContact(id),
+          onCancel: () {},
+        );
+      },
+    );
+    return;
   }
 
   @override
@@ -150,7 +235,9 @@ class _ContactScreenState extends State<ContactScreen> {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
-          onPressed: () {},
+          onPressed: () {
+            _showConfirmationDialog(context, _filteredContacts[index].id);
+          },
           color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(

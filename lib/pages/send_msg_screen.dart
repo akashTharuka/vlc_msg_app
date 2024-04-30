@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
 import 'package:vlc_msg_app/models/user.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:vlc_msg_app/utils/encoder.dart';
 import 'package:vlc_msg_app/utils/rsa.dart';
@@ -22,6 +20,14 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
   String? _selectedContactPublicKey;
   String? _message;
   bool _isValid = false;
+  double _transmissionProgress = 0.0;
+  // bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _getContacts();
+  }
 
   Future<void> _getContacts() async {
     final DatabaseHelper dbHelper = DatabaseHelper();
@@ -37,12 +43,6 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _getContacts();
-  }
-
   void _updateIsValid() {
     setState(() {
       _isValid = _selectedContactPublicKey != null && (_message?.isNotEmpty ?? false);
@@ -50,20 +50,34 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
   }
 
   void _sendMessage() async {
-    final String encryptedMsg = await RSAUtils.encryptRSA(_message, _selectedContactPublicKey);
+    // setState(() {
+    //   _isSending = true;
+    // });
+
+    final String encryptedMsg = await RSAUtils.encryptRSA('msg', _selectedContactPublicKey);
     final String encodedMsg = Encoder.encodeToBinary(encryptedMsg);
 
     final DatabaseHelper dbHelper = DatabaseHelper();
     User user = await dbHelper.getUser();
 
-    print("");
+    print("encryptedMsg: $encryptedMsg");
+    print("encodedMsg: $encodedMsg");
 
     final String decodedMsg = Encoder.decodeFromBinary(encodedMsg);
     final String decryptedMsg = await RSAUtils.decryptRSA(decodedMsg, user.privateKey);
 
     print(decryptedMsg);
     // Transmitter.transmit(encodedMsg);
-    // Transmitter.transmit('011111101100011101100000');
+    Transmitter.transmit('011111101100011101100000', (progress) {
+      setState(() {
+        _transmissionProgress = progress;
+      });
+    });
+
+    setState(() {
+      // _isSending = false;
+      _transmissionProgress = 0.0;
+    });
   }
 
   @override
@@ -137,6 +151,10 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
                   selectedItem: null,
                 ),
                 msgInputField(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: LinearProgressIndicator(value: _transmissionProgress),
+                ),
                 sendButton(context),
               ],
             ),
@@ -160,7 +178,7 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
             borderRadius: BorderRadius.circular(10),
           )),
         ),
-        onPressed: _isValid ? _sendMessage : null,
+        onPressed: !_isValid ? _sendMessage : null,
         child: Text(
           'Send',
           style: _isValid 

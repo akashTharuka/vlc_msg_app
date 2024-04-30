@@ -77,10 +77,16 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return Scaffold(
-      body: Center(
-        child: CameraPreview(controller),
-      ),
+    // return Scaffold(
+    //   body: Center(
+    //     child: CameraPreview(controller),
+    //   ),
+    // );
+    return AspectRatio(
+      aspectRatio: controller.value.aspectRatio,
+      child: CameraPreview(controller),
     );
   }
 }
+
+
