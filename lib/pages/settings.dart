@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/user.dart';
+import 'package:vlc_msg_app/pages/home_screen.dart';
 import 'package:vlc_msg_app/utils/confirmation_dialog.dart';
 import 'package:vlc_msg_app/utils/rsa.dart';
 
@@ -16,7 +17,6 @@ class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _nameController = TextEditingController();
   String accountName = 'John Doe'; // Initial account name
   final DatabaseHelper dbHelper = DatabaseHelper();
-  
 
   @override
   void initState() {
@@ -24,12 +24,38 @@ class _SettingsPageState extends State<SettingsPage> {
     _getCurrentUser();
   }
 
+  Future<void> _updateName() async {
+    User currentUser = await dbHelper.getUser();
+    currentUser.name = _nameController.text;
+    int result = await dbHelper.updateUser(currentUser);
+    if (result != 0) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.success,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Success'),
+        description:
+            RichText(text: const TextSpan(text: 'Name updated successfully')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    } else {
+      toastification.show(
+        context: context,
+        type: ToastificationType.error,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Failed'),
+        description: RichText(text: const TextSpan(text: 'Name update failed')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    }
+  }
+
   Future<void> _getCurrentUser() async {
     final User currentUser = await dbHelper.getUser();
     setState(() {
       accountName = currentUser.name;
       _nameController.text = accountName;
-    }); 
+    });
   }
 
   Future<void> _updateKeys() async {
@@ -49,7 +75,8 @@ class _SettingsPageState extends State<SettingsPage> {
         type: ToastificationType.success,
         style: ToastificationStyle.fillColored,
         title: const Text('Success'),
-        description: RichText(text: const TextSpan(text: 'RSA keys updated successfully')),
+        description: RichText(
+            text: const TextSpan(text: 'RSA keys updated successfully')),
         autoCloseDuration: const Duration(seconds: 5),
       );
     } else {
@@ -58,7 +85,8 @@ class _SettingsPageState extends State<SettingsPage> {
         type: ToastificationType.error,
         style: ToastificationStyle.fillColored,
         title: const Text('Failed'),
-        description: RichText(text: const TextSpan(text: 'RSA keys update failed')),
+        description:
+            RichText(text: const TextSpan(text: 'RSA keys update failed')),
         autoCloseDuration: const Duration(seconds: 5),
       );
     }
@@ -71,7 +99,8 @@ class _SettingsPageState extends State<SettingsPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ConfirmationDialog(
-          title: 'This will update your public and private keys which will nullify your contact',
+          title:
+              'This will update your public and private keys which will nullify your contact',
           content: 'Are you sure you want to proceed?',
           onConfirm: _updateKeys,
           onCancel: () {},
@@ -182,8 +211,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 230, 239, 239, 239)), // set opacity here
                         foregroundColor: MaterialStateProperty.all(
                             Colors.black.withOpacity(0.55)),
-                        shape:
-                            MaterialStateProperty.all(RoundedRectangleBorder(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         )),
                       ),
@@ -217,9 +245,16 @@ class _SettingsPageState extends State<SettingsPage> {
                           )),
                         ),
                         onPressed: () {
-                          setState(() {
-                            accountName = _nameController.text;
-                          });
+                          _updateName();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomeScreen()),
+                            (Route<dynamic> route) => false,
+                          );
+
+                          // setState(() {
+                          //   accountName = _nameController.text;
+                          // });
                         },
                         child: const Text(
                           'Save Changes',
