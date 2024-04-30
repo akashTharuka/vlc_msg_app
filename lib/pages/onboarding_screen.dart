@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:local_auth/local_auth.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,8 +13,8 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-
   final _controller = TextEditingController();
+  final LocalAuthentication _localAuth = LocalAuthentication();
 
   bool _checkboxValue = false;
   bool _validate = false;
@@ -35,7 +36,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _checkInput() {
     setState(() {
-      _validate = _controller.text.isEmpty || !isAlphanumeric(_controller.text) || _controller.text.length < 3 || _controller.text.length > 20;
+      _validate = _controller.text.isEmpty ||
+          !isAlphanumeric(_controller.text) ||
+          _controller.text.length < 3 ||
+          _controller.text.length > 20;
       _isButtonEnabled = !_validate;
     });
   }
@@ -89,7 +93,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: SizedBox(
                           width: 220.0, // specify the width
                           height: 220.0, // specify the height
-                          child: Image.asset('assets/images/appLogo.png'), // Logo
+                          child:
+                              Image.asset('assets/images/appLogo.png'), // Logo
                         ),
                       ),
                       RichText(
@@ -102,7 +107,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             TextSpan(
                               text: 'LuminaLinq',
                               style: TextStyle(
-                                color: Color(0xFF569AA3), // Different color for the word "LuminaLinq"
+                                color: Color(
+                                    0xFF569AA3), // Different color for the word "LuminaLinq"
                                 fontWeight: FontWeight
                                     .normal, // Optional: you can apply different styles too
                               ),
@@ -116,7 +122,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           bottom: 10.0,
                         ), // 5px margin from the bottom
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 30), // Adjust margin as needed
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 30), // Adjust margin as needed
                           child: TextField(
                             controller: _controller,
                             textAlign: TextAlign.center,
@@ -124,12 +131,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               contentPadding: const EdgeInsets.all(15),
                               hintText: 'Enter your name',
                               hintStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.onSecondary,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                                 fontSize: 14,
                               ),
-                              errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                              errorText:
+                                  _validate ? 'Value Can\'t Be Empty' : null,
                               filled: true,
-                              fillColor: Theme.of(context).colorScheme.onSurface, // This will change the text field color
+                              fillColor: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface, // This will change the text field color
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                                 borderSide: BorderSide.none,
@@ -144,7 +155,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 // Checkbox and Next Page button below the container
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   child: Row(
                     children: [
                       Checkbox(
@@ -160,7 +172,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Flexible(
                         child: Text(
                           'Do you wish to use your mobile credentials as your login details?',
-                          overflow: TextOverflow.visible, // This ensures the text wraps if needed
+                          overflow: TextOverflow
+                              .visible, // This ensures the text wraps if needed
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -173,48 +186,120 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   margin: const EdgeInsets.only(top: 50),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.background), // set opacity here
-                      foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context)
+                              .colorScheme
+                              .background), // set opacity here
+                      foregroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.primary),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       )),
                     ),
-                    onPressed: _isButtonEnabled ? () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setBool('onboarding', true);
+                    onPressed: _isButtonEnabled
+                        ? () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setBool('onboarding', true);
 
-                      if (!mounted) return;
+                            if (!mounted) return;
 
-                      final User user = User(
-                        name: _controller.text,
-                        privateKey: '',
-                        publicKey: '',
-                        mobileUnlock: _checkboxValue ? 1 : 0,
-                      );
+                            final User user = User(
+                              name: _controller.text,
+                              privateKey: '',
+                              publicKey: '',
+                              mobileUnlock: _checkboxValue ? 1 : 0,
+                            );
 
-                      try {
-                        _saveUser(user);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      } on Exception catch (e) {
-                        setState(() {
-                          error = e.toString();
-                        });
-                      }
+                            try {
+                              _saveUser(user);
+                              if (_checkboxValue) {
+                                bool isAuthenticated = false;
+                                try {
+                                  isAuthenticated =
+                                      await _localAuth.authenticate(
+                                    localizedReason:
+                                        'Please authenticate to proceed',
+                                  );
+                                } catch (e) {
+                                  print('LocalAuth error: $e');
+                                }
 
-                    } : null,
+                                if (isAuthenticated) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()),
+                                  );
+                                }
+
+                                // If the checkbox is ticked, show a dialog to enter the phone PIN
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return AlertDialog(
+                                //       title: Text('Enter Phone PIN'),
+                                //       content: TextField(
+                                //         obscureText:
+                                //             true, // Use this to hide the entered text
+                                //         onChanged: (value) {
+                                //           // Handle the entered PIN here
+                                //         },
+                                //       ),
+                                //       actions: [
+                                //         TextButton(
+                                //           onPressed: () {
+                                //             Navigator.pop(
+                                //                 context); // Close the dialog
+                                //             Navigator.pushReplacement(
+                                //               context,
+                                //               MaterialPageRoute(
+                                //                   builder: (context) =>
+                                //                       HomeScreen()),
+                                //             );
+                                //           },
+                                //           child: Text('OK'),
+                                //         ),
+                                //       ],
+                                //     );
+                                //   },
+                                // );
+                              } else {
+                                // If the checkbox is not ticked, navigate to the home page directly
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()),
+                                );
+                              }
+                            } on Exception catch (e) {
+                              setState(() {
+                                error = e.toString();
+                              });
+                            }
+                          }
+                        : null,
+
+                    //     Navigator.pushReplacement(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => HomeScreen()),
+                    //     );
+                    //   } on Exception catch (e) {
+                    //     setState(() {
+                    //       error = e.toString();
+                    //     });
+                    //   }
+
+                    // } : null,
                     child: Text(
                       'Get Started',
-                      style: _isButtonEnabled 
-                        ? Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontWeight: FontWeight.w700
-                        ) 
-                        : Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: Theme.of(context).colorScheme.onSecondary
-                        ),
+                      style: _isButtonEnabled
+                          ? Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(fontWeight: FontWeight.w700)
+                          : Theme.of(context).textTheme.labelSmall!.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).colorScheme.onSecondary),
                     ),
                   ),
                 ),
