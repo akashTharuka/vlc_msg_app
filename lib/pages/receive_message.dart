@@ -3,6 +3,8 @@ import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/utils/transmitter.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
+import 'package:vlc_msg_app/models/msg.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
 
 class ReceiveMessagePage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class ReceiveMessagePage extends StatefulWidget {
 
 class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
   late Future<List<CameraDescription>> _camerasFuture;
+  
 
   @override
   void initState() {
@@ -101,6 +104,7 @@ class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
 
 class CameraPreviewWidget extends StatefulWidget {
   final CameraDescription camera;
+  
 
   const CameraPreviewWidget({
     Key? key,
@@ -112,6 +116,7 @@ class CameraPreviewWidget extends StatefulWidget {
 }
 
 class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
+  final DatabaseHelper dbHelper = DatabaseHelper();
   late CameraController _cameraController;
   bool _isReceiving = false;
   String _receivedBinary = "";
@@ -192,7 +197,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
   }
 
   img.Image _convertToGrayscale(CameraImage cameraImage) {
-
     // Convert CameraImage to a usable format (like YUV to RGB)
     final img.Image image = _convertYUV420toImage(cameraImage);
 
@@ -201,7 +205,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
   }
 
   img.Image _convertYUV420toImage(CameraImage cameraImage) {
-
     // Get image dimensions
     final width = cameraImage.width;
     final height = cameraImage.height;
@@ -224,7 +227,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     // Convert YUV to RGB
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        
         // Get the Y, U, V values for this pixel
         final yVal = yPlane[y * cameraImage.planes[0].bytesPerRow + x];
 
@@ -256,7 +258,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
   }
 
   bool _isFlashlightOn(img.Image grayscaleImage) {
-    
     int bright_pixel_count = 0;
     int total_pixel_count = grayscaleImage.width * grayscaleImage.height;
 
@@ -287,7 +288,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     _cameraController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -352,8 +352,25 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
             borderRadius: BorderRadius.circular(10),
           )),
         ),
-        onPressed: () {
+        onPressed: () async {
           _stopReceiving();
+
+          Message msg = Message(
+            timestamp: DateTime.now(), 
+            text: _receivedBinary, 
+          );
+
+          // Save the message to the database
+          try {
+            int result = await dbHelper.saveMessage(msg);
+            if (result != 0) {
+              print('Message saved successfully');
+            } else {
+              print('Failed to save message');
+            }
+          } catch (e) {
+            print('Error saving message: $e');
+          }
         },
         child: Text(
           'Stop',
