@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 import 'package:vlc_msg_app/utils/transmitter.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/models/msg.dart';
@@ -161,7 +162,7 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     });
   }
 
-  void _stopReceiving() {
+  void _stopReceiving() async {
 
     _cameraController.stopImageStream();
 
@@ -189,6 +190,10 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     }
 
     identifyPattern(_receivedBinary);
+
+    String msg = 'random msg';
+
+    await _saveMessaage(msg);
 
     // Remove start and end strings, if present
     // var receivedBinaryWithoutMarkers = _receivedBinary.replaceAll(Transmitter.startString, '');
@@ -393,25 +398,8 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
             borderRadius: BorderRadius.circular(10),
           )),
         ),
-        onPressed: () async {
+        onPressed: () {
           _stopReceiving();
-
-          Message msg = Message(
-            timestamp: DateTime.now(), 
-            text: _receivedBinary, 
-          );
-
-          // Save the message to the database
-          try {
-            int result = await dbHelper.saveMessage(msg);
-            if (result != 0) {
-              print('Message saved successfully');
-            } else {
-              print('Failed to save message');
-            }
-          } catch (e) {
-            print('Error saving message: $e');
-          }
         },
         child: Text(
           'Stop',
@@ -419,6 +407,41 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> _saveMessaage(String msg) async {
+    Message msg = Message(
+      timestamp: DateTime.now(), 
+      text: _receivedBinary, 
+    );
+    
+    // Save the message to the database
+    try {
+      int result = await dbHelper.saveMessage(msg);
+      if (result != 0) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Success'),
+          description: RichText(
+              text: const TextSpan(text: 'RSA keys updated successfully')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+    } else {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.fillColored,
+          title: const Text('Failed'),
+          description:
+              RichText(text: const TextSpan(text: 'RSA keys update failed')),
+          autoCloseDuration: const Duration(seconds: 5),
+        );
+      }
+    } catch (e) {
+      print('Error saving message: $e');
+    }
   }
 
   AppBar appBar(BuildContext context) {
