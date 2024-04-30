@@ -1,6 +1,11 @@
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
+import 'package:vlc_msg_app/utils/encoder.dart';
+import 'package:vlc_msg_app/utils/rsa.dart';
 import 'package:vlc_msg_app/utils/transmitter.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
 
@@ -11,6 +16,7 @@ class ReceiveMessagePage extends StatefulWidget {
 
 class _ReceiveMessagePageState extends State<ReceiveMessagePage> {
   late Future<List<CameraDescription>> _camerasFuture;
+  String _currentUserPrivateKey = '';
 
   @override
   void initState() {
@@ -156,7 +162,7 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     });
   }
 
-  void _stopReceiving() {
+  void _stopReceiving() async {
 
     _cameraController.stopImageStream();
 
@@ -183,13 +189,23 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
       }
     }
 
-    identifyPattern(_receivedBinary);
+    DatabaseHelper dbHelper = DatabaseHelper();
+    User user = await dbHelper.getUser();
+
+    final String encryptedMsg = await RSAUtils.encryptRSA('hello world!', user.publicKey);
+    final String encodedMsg = Encoder.encodeToBinary(encryptedMsg);
+
+    String decodedMsg = Encoder.decodeFromBinary(encodedMsg);
+    print("Decoded message: $decodedMsg");
+    String originalMsg = await RSAUtils.decryptRSA(decodedMsg, user.privateKey);
+    print("Original message: $originalMsg");
 
     // Remove start and end strings, if present
     // var receivedBinaryWithoutMarkers = _receivedBinary.replaceAll(Transmitter.startString, '');
     // receivedBinaryWithoutMarkers = receivedBinaryWithoutMarkers.replaceAll(Transmitter.endString, '');
 
     print("Received binary: $_receivedBinary");
+    identifyPattern(_receivedBinary);
   }
 
   void identifyPattern(String binaryString) {
