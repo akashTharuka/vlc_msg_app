@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _saveUser(User user) async {
     final DatabaseHelper dbHelper = DatabaseHelper();
-    dbHelper.saveUser(user);
+    await dbHelper.saveUser(user);
   }
 
   @override

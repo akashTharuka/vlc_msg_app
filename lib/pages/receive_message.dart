@@ -288,6 +288,7 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (!_cameraController.value.isInitialized) {

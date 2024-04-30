@@ -1,21 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
+import 'package:toastification/toastification.dart';
+import 'package:vlc_msg_app/db/db_helper.dart';
+import 'package:vlc_msg_app/models/user.dart';
+import 'package:vlc_msg_app/utils/confirmation_dialog.dart';
+import 'package:vlc_msg_app/utils/rsa.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   String accountName = 'John Doe'; // Initial account name
+  final DatabaseHelper dbHelper = DatabaseHelper();
+  
 
   @override
   void initState() {
     super.initState();
-    _nameController.text = accountName;
+    _getCurrentUser();
+  }
+
+  Future<void> _getCurrentUser() async {
+    final User currentUser = await dbHelper.getUser();
+    setState(() {
+      accountName = currentUser.name;
+      _nameController.text = accountName;
+    }); 
+  }
+
+  Future<void> _updateKeys() async {
+    User currentUser = await dbHelper.getUser();
+    final keyPair = await RSAUtils.generateKeyPair();
+    currentUser.publicKey = keyPair['publicKey']!;
+    currentUser.privateKey = keyPair['privateKey']!;
+    if (currentUser.publicKey.isEmpty || currentUser.privateKey.isEmpty) {
+      // Handle error
+      print('Error generating RSA key pair');
+      return;
+    }
+    int result = await dbHelper.updateUser(currentUser);
+    if (result != 0) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.success,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Success'),
+        description: RichText(text: const TextSpan(text: 'RSA keys updated successfully')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    } else {
+      toastification.show(
+        context: context,
+        type: ToastificationType.error,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Failed'),
+        description: RichText(text: const TextSpan(text: 'RSA keys update failed')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    }
+    return;
+  }
+
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          title: 'This will update your public and private keys which will nullify your contact',
+          content: 'Are you sure you want to proceed?',
+          onConfirm: _updateKeys,
+          onCancel: () {},
+        );
+      },
+    );
   }
 
   @override
@@ -50,18 +112,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     height: 80,
                     child: Image.asset('assets/images/BareLogo.png'),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                        top: 15.0), // specify the top margin
-                    child: Text(
-                      'Settings',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   Container(
                     alignment: Alignment.centerLeft, // Add this
-                    child: Text(
+                    child: const Text(
                       "Change your account name",
                       style: TextStyle(
                         color: Color.fromARGB(230, 239, 239,
@@ -69,49 +123,47 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      child: TextField(
-                        controller: _nameController,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 14, // Change this to your desired font size
+                    child: TextField(
+                      controller: _nameController,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: 14, // Change this to your desired font size
+                      ),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(15),
+                        hintText: _nameController.text.isEmpty
+                            ? 'Enter account name'
+                            : _nameController.text,
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 14,
                         ),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(15),
-                          hintText: _nameController.text.isEmpty
-                              ? 'Enter account name'
-                              : _nameController.text,
-                          hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            fontSize: 14,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          // fillColor: Theme.of(context).colorScheme.onSurface, // This will change the text field color
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide.none,
-                          ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        // fillColor: Theme.of(context).colorScheme.onSurface, // This will change the text field color
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Row(
                     children: <Widget>[
-                      Text(
+                      const Text(
                         'Use Phone PIN',
                         style: TextStyle(
                           color: Color.fromARGB(230, 239, 239,
                               239), // Change this to your desired color
                         ),
                       ),
-                      SizedBox(width: 180),
+                      const SizedBox(width: 180),
                       Switch(
                         value:
                             false, // replace with your logic to determine the initial value
@@ -121,17 +173,41 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 180),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            const Color.fromARGB(
+                                230, 239, 239, 239)), // set opacity here
+                        foregroundColor: MaterialStateProperty.all(
+                            Colors.black.withOpacity(0.55)),
+                        shape:
+                            MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        )),
+                      ),
+                      onPressed: () {
+                        _showConfirmationDialog(context);
+                      },
+                      child: const Text(
+                        'Update Keys',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 120),
                   Align(
                     alignment: Alignment.topRight,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.42,
                       height: MediaQuery.of(context).size.height * 0.05,
-                      margin: EdgeInsets.only(top: 15),
+                      margin: const EdgeInsets.only(top: 15),
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(
+                              const Color.fromARGB(
                                   230, 239, 239, 239)), // set opacity here
                           foregroundColor: MaterialStateProperty.all(
                               Colors.black.withOpacity(0.55)),
@@ -145,7 +221,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             accountName = _nameController.text;
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           'Save Changes',
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.normal),
@@ -167,6 +243,10 @@ AppBar appBar(BuildContext context) {
   return AppBar(
     backgroundColor: Colors.transparent, // here too
     elevation: 0, // and here
+    title: Text(
+      'Settings',
+      style: Theme.of(context).textTheme.titleMedium,
+    ),
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
       // onPressed: () {

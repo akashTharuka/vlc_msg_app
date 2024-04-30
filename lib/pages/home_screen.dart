@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/user.dart';
 import 'package:vlc_msg_app/pages/receive_message.dart';
-import 'package:vlc_msg_app/pages/contacts/contacts_screen.dart';
+import 'package:vlc_msg_app/pages/contacts_screen.dart';
 import 'package:vlc_msg_app/pages/message_history.dart';
 import 'package:vlc_msg_app/pages/onboarding_screen.dart';
 import 'package:vlc_msg_app/pages/qr_screen.dart';

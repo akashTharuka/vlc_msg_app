@@ -52,6 +52,9 @@ dependencies:
   camera: ^0.10.5+9
   dropdown_search: ^5.0.6
   image: ^4.1.7
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
+  toastification: ^1.2.1
 
 dev_dependencies:
   flutter_test:
