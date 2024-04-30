@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class RSAUtils {
-  static const int keySize = 512;
+  static const int keySize = 2048;
   static const fast_rsa.Hash hash = fast_rsa.Hash.SHA256;
   static const String label = '';
 

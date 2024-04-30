@@ -14,7 +14,8 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
 
-  final Database database;
+	final Database database;
+
   const MyApp({super.key, required this.database});
 
   @override

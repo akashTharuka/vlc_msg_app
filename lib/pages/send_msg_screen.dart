@@ -20,7 +20,8 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
   String? _selectedContactPublicKey;
   String? _message;
   bool _isValid = false;
-
+  double _transmissionProgress = 0.0;
+  // bool _isSending = false;
 
   @override
   void initState() {
@@ -49,6 +50,10 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
   }
 
   void _sendMessage() async {
+    // setState(() {
+    //   _isSending = true;
+    // });
+
     final String encryptedMsg = await RSAUtils.encryptRSA('msg', _selectedContactPublicKey);
     final String encodedMsg = Encoder.encodeToBinary(encryptedMsg);
 
@@ -63,7 +68,16 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
 
     print(decryptedMsg);
     // Transmitter.transmit(encodedMsg);
-    // Transmitter.transmit('011111101100011101100000');
+    Transmitter.transmit('011111101100011101100000', (progress) {
+      setState(() {
+        _transmissionProgress = progress;
+      });
+    });
+
+    setState(() {
+      // _isSending = false;
+      _transmissionProgress = 0.0;
+    });
   }
 
   @override
@@ -137,6 +151,10 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
                   selectedItem: null,
                 ),
                 msgInputField(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: LinearProgressIndicator(value: _transmissionProgress),
+                ),
                 sendButton(context),
               ],
             ),

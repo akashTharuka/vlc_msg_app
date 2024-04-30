@@ -74,7 +74,7 @@ class _QRScreenState extends State<QRScreen> {
       backgroundColor: Colors.transparent, // here too
       elevation: 0, // and here
       title: Text(
-        'Add Contact',
+        'Share Contact',
         style: Theme.of(context).textTheme.titleMedium,
       ),
       leading: IconButton(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/user.dart';
+import 'package:vlc_msg_app/utils/confirmation_dialog.dart';
 import 'package:vlc_msg_app/utils/rsa.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -40,7 +42,42 @@ class _SettingsPageState extends State<SettingsPage> {
       print('Error generating RSA key pair');
       return;
     }
-    await dbHelper.updateUser(currentUser);
+    int result = await dbHelper.updateUser(currentUser);
+    if (result != 0) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.success,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Success'),
+        description: RichText(text: const TextSpan(text: 'RSA keys updated successfully')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    } else {
+      toastification.show(
+        context: context,
+        type: ToastificationType.error,
+        style: ToastificationStyle.fillColored,
+        title: const Text('Failed'),
+        description: RichText(text: const TextSpan(text: 'RSA keys update failed')),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    }
+    return;
+  }
+
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          title: 'This will update your public and private keys which will nullify your contact',
+          content: 'Are you sure you want to proceed?',
+          onConfirm: _updateKeys,
+          onCancel: () {},
+        );
+      },
+    );
   }
 
   @override
@@ -74,14 +111,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   SizedBox(
                     height: 80,
                     child: Image.asset('assets/images/BareLogo.png'),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                        top: 15.0), // specify the top margin
-                    child: Text(
-                      'Settings',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
                   ),
                   const SizedBox(height: 80),
                   Container(
@@ -159,7 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         )),
                       ),
                       onPressed: () {
-                        _updateKeys();
+                        _showConfirmationDialog(context);
                       },
                       child: const Text(
                         'Update Keys',
@@ -214,6 +243,10 @@ AppBar appBar(BuildContext context) {
   return AppBar(
     backgroundColor: Colors.transparent, // here too
     elevation: 0, // and here
+    title: Text(
+      'Settings',
+      style: Theme.of(context).textTheme.titleMedium,
+    ),
     leading: IconButton(
       icon: const Icon(Icons.keyboard_arrow_left),
       // onPressed: () {
