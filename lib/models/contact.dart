@@ -25,7 +25,7 @@ class Contact extends BaseModel {
   static Contact fromMap(Map<String, dynamic> map) {
 
     return Contact.withId(
-      id: map['id'],
+      id: map['id'].toString(),
       name: map['name'],
       publicKey: map['publicKey'],
     );

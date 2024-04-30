@@ -49,21 +49,21 @@ class DatabaseHelper {
         'CREATE TABLE messages (id STRING PRIMARY KEY NOT NULL, timestamp TIMESTAMP NOT NULL, text TEXT NOT NULL)');
 
     // Add dummy data to contacts
-    var dummyContacts = [
-      {'id': '1', 'name': 'John Doe', 'publicKey': 'key1'},
-      {'id': '2', 'name': 'Jane Doe', 'publicKey': 'key2'},
-      {'id': '3', 'name': 'Alice', 'publicKey': 'key3'},
-      {'id': '4', 'name': 'Bob', 'publicKey': 'key4'},
-      {'id': '5', 'name': 'Charlie', 'publicKey': 'key5'},
-      {'id': '6', 'name': 'David', 'publicKey': 'key6'},
-      {'id': '7', 'name': 'Eve', 'publicKey': 'key7'},
-      {'id': '8', 'name': 'Frank', 'publicKey': 'key8'},
-      {'id': '9', 'name': 'Grace', 'publicKey': 'key9'},
-      {'id': '10', 'name': 'Heidi', 'publicKey': 'key10'},
-    ];
-    for (var contact in dummyContacts) {
-      await db.insert('contacts', contact);
-    }
+    // var dummyContacts = [
+    //   {'id': '1', 'name': 'John Doe', 'publicKey': 'key1'},
+    //   {'id': '2', 'name': 'Jane Doe', 'publicKey': 'key2'},
+    //   {'id': '3', 'name': 'Alice', 'publicKey': 'key3'},
+    //   {'id': '4', 'name': 'Bob', 'publicKey': 'key4'},
+    //   {'id': '5', 'name': 'Charlie', 'publicKey': 'key5'},
+    //   {'id': '6', 'name': 'David', 'publicKey': 'key6'},
+    //   {'id': '7', 'name': 'Eve', 'publicKey': 'key7'},
+    //   {'id': '8', 'name': 'Frank', 'publicKey': 'key8'},
+    //   {'id': '9', 'name': 'Grace', 'publicKey': 'key9'},
+    //   {'id': '10', 'name': 'Heidi', 'publicKey': 'key10'},
+    // ];
+    // for (var contact in dummyContacts) {
+    //   await db.insert('contacts', contact);
+    // }
 
     var dummyMessages = [
       {'id': '1', 'timestamp': DateTime.now().toString(), 'text': 'Dummy message 1'},
