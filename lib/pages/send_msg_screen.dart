@@ -68,7 +68,7 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
 
     print(decryptedMsg);
     // Transmitter.transmit(encodedMsg);
-    Transmitter.transmit('011111101100011101100000', (progress) {
+    Transmitter.transmit('1010101011001100', (progress) {
       setState(() {
         _transmissionProgress = progress;
       });
