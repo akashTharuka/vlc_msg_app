@@ -162,7 +162,6 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
   }
 
   void _stopReceiving() {
-    if (!_isReceiving) return;
 
     _cameraController.stopImageStream();
 
@@ -189,11 +188,53 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
       }
     }
 
+    identifyPattern(_receivedBinary);
+
     // Remove start and end strings, if present
     // var receivedBinaryWithoutMarkers = _receivedBinary.replaceAll(Transmitter.startString, '');
     // receivedBinaryWithoutMarkers = receivedBinaryWithoutMarkers.replaceAll(Transmitter.endString, '');
 
     print("Received binary: $_receivedBinary");
+  }
+
+  void identifyPattern(String binaryString) {
+    var result = '';
+    var currVal = '1';
+    var count = 1;
+    int threshold = 14;
+
+    String startSequence = '01111110';
+    String endSequence = '01100000';
+
+    bool transmissionStarted = false;
+
+    for (int i = 1; i < binaryString.length; i++) {
+      if (binaryString[i] == binaryString[i - 1]) {
+        count++;
+      } else {
+        if (count <= threshold) {
+          result += currVal;
+          count = 1;
+        }
+        else {
+          currVal = currVal == '1' ? '0' : '1';
+          result += currVal;
+          count = 1;
+        }
+      }
+
+      // Check for the start and end sequences
+      if (!transmissionStarted && result.endsWith(startSequence)) {
+        transmissionStarted = true;
+        result = '';
+      } else if (transmissionStarted && result.endsWith(endSequence)) {
+        transmissionStarted = false;
+        print("Identified pattern: $result");
+        result = '';
+      }
+    }
+
+    print("Identified pattern: $result");
   }
 
   img.Image _convertToGrayscale(CameraImage cameraImage) {
