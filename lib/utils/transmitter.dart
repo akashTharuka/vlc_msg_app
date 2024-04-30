@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:toastification/toastification.dart';
 import 'package:torch_light/torch_light.dart';
 
 
@@ -17,13 +15,17 @@ class Transmitter {
   static void transmit(String binaryString, Function(double) onProgressUpdate) async {
     for (int i = 0; i < binaryString.length; i++) {
       if (binaryString[i] == '1') {
+        await TorchLight.disableTorch();
+        await Future.delayed(const Duration(milliseconds: 200)); 
         await TorchLight.enableTorch();
+        await Future.delayed(const Duration(milliseconds: 200)); 
       } 
       else {
+        await TorchLight.enableTorch();
+        await Future.delayed(const Duration(milliseconds: 200));
         await TorchLight.disableTorch();
+        await Future.delayed(const Duration(milliseconds: 200));
       }
-
-      // await Future.delayed(const Duration(milliseconds: 200)); 
 
       double progress = (i + 1) / binaryString.length;
       onProgressUpdate(progress);

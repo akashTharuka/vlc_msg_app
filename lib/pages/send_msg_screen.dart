@@ -54,21 +54,21 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
     //   _isSending = true;
     // });
 
-    final String encryptedMsg = await RSAUtils.encryptRSA('msg', _selectedContactPublicKey);
+    final String encryptedMsg = await RSAUtils.encryptRSA('hello world!', _selectedContactPublicKey);
     final String encodedMsg = Encoder.encodeToBinary(encryptedMsg);
 
     final DatabaseHelper dbHelper = DatabaseHelper();
-    User user = await dbHelper.getUser();
+    // User user = await dbHelper.getUser();
 
     print("encryptedMsg: $encryptedMsg");
     print("encodedMsg: $encodedMsg");
 
-    final String decodedMsg = Encoder.decodeFromBinary(encodedMsg);
-    final String decryptedMsg = await RSAUtils.decryptRSA(decodedMsg, user.privateKey);
+    // final String decodedMsg = Encoder.decodeFromBinary(encodedMsg);
+    // final String decryptedMsg = await RSAUtils.decryptRSA(decodedMsg, user.privateKey);
 
-    print(decryptedMsg);
+    // print(decryptedMsg);
     // Transmitter.transmit(encodedMsg);
-    Transmitter.transmit('011111101100011101100000', (progress) {
+    Transmitter.transmit('1010101011001100', (progress) {
       setState(() {
         _transmissionProgress = progress;
       });
@@ -178,7 +178,7 @@ class _SendMsgScreenState extends State<SendMsgScreen> {
             borderRadius: BorderRadius.circular(10),
           )),
         ),
-        onPressed: !_isValid ? _sendMessage : null,
+        onPressed: _isValid ? _sendMessage : null,
         child: Text(
           'Send',
           style: _isValid 
