@@ -23,7 +23,7 @@ class Transmitter {
         await TorchLight.disableTorch();
       }
 
-      await Future.delayed(const Duration(milliseconds: 200)); 
+      // await Future.delayed(const Duration(milliseconds: 200)); 
 
       double progress = (i + 1) / binaryString.length;
       onProgressUpdate(progress);
