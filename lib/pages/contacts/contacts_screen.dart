@@ -5,7 +5,6 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vlc_msg_app/db/db_helper.dart';
 import 'package:vlc_msg_app/models/contact.dart';
-import 'package:vlc_msg_app/pages/home_screen.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
@@ -34,6 +33,18 @@ class _ContactScreenState extends State<ContactScreen> {
       });
     } on Exception catch (e) {
       error = e.toString();
+    }
+  }
+
+  Future<void> _deleteContact(String id) async {
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    try {
+      await dbHelper.deleteContactById(id);
+      await _getContacts();
+    } on Exception catch (e) {
+      setState(() {
+        error = e.toString();
+      });
     }
   }
 
@@ -150,7 +161,9 @@ class _ContactScreenState extends State<ContactScreen> {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
-          onPressed: () {},
+          onPressed: () {
+            _deleteContact(_filteredContacts[index].id);
+          },
           color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(

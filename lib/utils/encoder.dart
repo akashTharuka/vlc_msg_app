@@ -35,8 +35,17 @@ class Encoder {
     
     // return text;
 
-    List<int> compressedEncoded = binary.split('').map((String bit) => int.parse(bit)).toList();
+    List<int> compressedEncoded = [];
+    for (int i = 0; i < binary.length; i += 8) {
+      String binaryByte = binary.substring(i, i + 8);
+      compressedEncoded.add(int.parse(binaryByte, radix: 2));
+    }
+
+    // Decompress the data.
     List<int> originalEncoded = gzip.decode(compressedEncoded);
-    return utf8.decode(originalEncoded);
+
+    // Decode the data from UTF-8.
+    String text = utf8.decode(originalEncoded);
+    return text;
   }
 }

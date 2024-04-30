@@ -50,6 +50,8 @@ dependencies:
   torch_light: ^1.0.0
   camera: ^0.10.5+9
   dropdown_search: ^5.0.6
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:
